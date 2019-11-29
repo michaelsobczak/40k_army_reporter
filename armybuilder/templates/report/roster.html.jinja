@@ -1,4 +1,20 @@
 {% extends "report/base.html.jinja" %}
 {% block content %}
-<p>roster report</p>
+
+<ul>
+    <li>  Player Name : {{ player_name }}</li>
+    <li>  Kill Team Name : {{ kill_team_name }}</li>
+    <li>  Faction : {{ faction }}</li>
+    <li>  Subfaction : {{ sub_faction }}</li>
+    <li>  Points : {{ points }}</li>
+    <ul>
+        {% for model in models %}
+            <ul>
+            {% for key,value in model.items() %}
+                <li> {{ key }} : {{ value }}</li>
+            {% endfor %}
+            </ul>
+        {% endfor %}
+    </ul>
+</ul>
 {% endblock %}
