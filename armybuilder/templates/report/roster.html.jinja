@@ -7,14 +7,13 @@
     <li>  Faction : {{ faction }}</li>
     <li>  Subfaction : {{ sub_faction }}</li>
     <li>  Points : {{ points }}</li>
-    <ul>
-        {% for model in models %}
-            <ul>
-            {% for key,value in model.items() %}
-                <li> {{ key }} : {{ value }}</li>
-            {% endfor %}
-            </ul>
-        {% endfor %}
-    </ul>
 </ul>
+<table id="roster-table">
+    {{ macros.roster_table_heading(models[0].keys()) }}
+    {% for m in models %}
+        {{ macros.roster_row(m) }}
+    {% endfor %}
+
+</table>
+
 {% endblock %}

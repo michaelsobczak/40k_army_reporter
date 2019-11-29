@@ -51,7 +51,7 @@ def generate_report(output_dir: str):
         'id' : 0,
         'name' : 'MODEL NAME',
         'model_type' : 'MODEL_TYPE',
-        'wargear' : [dummy_wargear],
+        'wargear' : [dummy_wargear, dummy_wargear],
         'specialization' : dummy_specialization,
         'points' : 10,
         'move' : 5,
@@ -79,7 +79,7 @@ def generate_report(output_dir: str):
             'faction' : 'Ork',
             'sub_faction' : 'Evil Sunz',
             'points' : '125',
-            'models' : [dummy_model]
+            'models' : [dummy_model, dummy_model, dummy_model]
         }
     }
 

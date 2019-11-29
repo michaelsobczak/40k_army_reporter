@@ -1,0 +1,33 @@
+{% macro roster_row(roster_entry) %}
+    <tr>
+        {# {% for key,value in roster_entry.items() %}
+            <td>{{value}}</td>
+        {% endfor %} #}
+        <td>{{ roster_entry.id }}</td>
+        <td>{{ roster_entry.name }}</td>
+        <td>{{ roster_entry.model_type }}</td>
+        <td>
+            {% for w in roster_entry.wargear %}
+            {{ w.name }}
+            {% endfor %}
+        </td>
+        <td>{{ roster_entry.specialization.name }}</td>
+        <td>{{ roster_entry.points }}</td>
+    </tr>
+{% endmacro %}
+
+{% macro roster_table_heading(column_headings) %}
+    <tr>
+    {% for key in (column_headings|list)[:6] %}
+        <th>{{ key }}</th>
+    {% endfor %}
+    </tr>
+{% endmacro %}
+
+{% macro configure_roster_table(roster_entry) %}
+    <table id="roster-table">
+        {% for key,value in roster_entry.items() %}
+            <th>key</th>
+        {% endfor %}
+    </table>
+{% endmacro %}
