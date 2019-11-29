@@ -1,0 +1,26 @@
+{% import "web/macros.html.jinja" as macros %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:vml="urn:schemas-microsoft-com:vml">
+    <head>
+    <script src="{{ url_for('static', filename='thirdparty/jquery-3.4.1.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='thirdparty/bootstrap.min.css') }}">
+    <script src="{{ url_for('static', filename='thirdparty/bootstrap.min.js') }}"></script>
+        {% if title %}
+        <title>{{ title }}</title>
+        {% else %}
+        <title>Kill Team Army Builder</title>
+        {% endif %}
+        {% block head %}
+        {% endblock %}
+    </head>
+    <body>
+    {% block content %}
+    {% endblock %}
+    </body>
+    {% block scripts %}
+    {% endblock %}
+    {% block tail %}
+    {% endblock %}
+</html>
