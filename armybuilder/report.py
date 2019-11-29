@@ -29,7 +29,7 @@ def generate_report(output_dir: str):
         'type' : 'HEAVY TYPE 6',
         'strength' : 'STRENGTH',
         'ap' : '-AP',
-        'damage' : "damage"
+        'damage' : "damage",
         'abilities' : [dummy_ability]
     }
 
@@ -54,7 +54,7 @@ def generate_report(output_dir: str):
         'wargear' : [dummy_wargear],
         'specialization' : dummy_specialization,
         'points' : 10,
-        'move' : 5
+        'move' : 5,
         'weapon_skill' : 3,
         'balistic_skill' : 5,
         'strength' : 4,
@@ -62,7 +62,7 @@ def generate_report(output_dir: str):
         'wounds' : 1,
         'attacks' : 2,
         'leadership' : 6,
-        'save' : 6
+        'save' : 6,
         'abilities' : [dummy_ability]
 
 
