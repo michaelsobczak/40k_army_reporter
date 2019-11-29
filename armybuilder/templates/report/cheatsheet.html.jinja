@@ -1,0 +1,9 @@
+{% extends "report/base.html.jinja" %}
+{% block content %}
+<p>Cheatsheet report</p>
+<ul>
+{% for row in cheatsheetRows %}
+<li>{{ row }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
