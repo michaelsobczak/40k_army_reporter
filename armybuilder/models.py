@@ -1,9 +1,10 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, ForeignKey, Integer, Text, create_engine, Table, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, Text, create_engine, Table, Boolean, String
 from sqlalchemy.orm import relationship
 import os
 from typing import Type
-
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 DB_DIALECT = 'sqlite'
 DB_PATH = os.path.join(os.path.dirname(__file__), '.db', 'db.sqlite')
 
@@ -26,6 +27,22 @@ def get_sqlalchemy_uri() -> str:
 
 Base = declarative_base()
 
+# Create user model.
+class User(UserMixin, Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    username = Column(String(64), index=True, unique=True)
+    email = Column(String(120), index=True, unique=True)
+    password_hash = Column(String(128))
+
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 def make_secondary_table(a: str, b: str) -> Table:
     table_name = f'{a}_{b}_secondary'

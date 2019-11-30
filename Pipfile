@@ -11,6 +11,8 @@ flask = "*"
 flask-sqlalchemy = "*"
 flask-restless = "*"
 flask-admin = "*"
+flask-login = "*"
+flask-wtf = "*"
 
 [requires]
 python_version = "3.8"

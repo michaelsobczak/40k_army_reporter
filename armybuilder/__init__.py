@@ -2,8 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_login import LoginManager
 import os
-from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry, Faction
+from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry, Faction, User
 
 app = Flask(__name__)
 
@@ -18,10 +19,14 @@ setup_app()
 
 
 db = SQLAlchemy(app, model_class=Base)
+login = LoginManager(app)
 
+@login.user_loader
+def load_user(id):
+    return db.session.query(User).get(int(id))
 
 # set up admin stuff
-admin = Admin(app)
+admin = Admin(app, name='Admin')
 
 class RosterEntryView(ModelView):
     column_list = ['name', 'figure', 'specialization', 'roster', 'points', 'wargear']
@@ -44,8 +49,7 @@ admin.add_view(TacticView(Tactic, db.session, category='Rules'))
 admin.add_view(RosterView(Roster, db.session, category='Roster'))
 admin.add_view(RosterEntryView(RosterEntry, db.session, category='Roster'))
 admin.add_view(ModelView(Faction, db.session, category='Metadata'))
-
-
+admin.add_view(ModelView(User, db.session, category='User'))
 
 
 from . import views, report
