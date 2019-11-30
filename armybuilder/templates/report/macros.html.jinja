@@ -17,7 +17,7 @@
 {% endmacro %}
 
 {% macro roster_table_heading(column_headings) %}
-    <tr>
+    <tr class="table-heading">
     {% for key in (column_headings|list)[:6] %}
         <th>{{ key }}</th>
     {% endfor %}
@@ -33,7 +33,7 @@
 {% endmacro %}
 
 {% macro data_card_table_heading_for_model(column_headings) %}
-    <tr>
+    <tr class="table-heading">
         <th>Name</th>
         <th>M</th>
         <th>Ws</th>
@@ -48,7 +48,7 @@
 {% endmacro %}
 
 {% macro data_card_table_heading_for_weapons(column_headings) %}
-    <tr>
+    <tr class="table-heading">
         <th>Weapon</th>
         <th>Range</th>
         <th>Type</th>
@@ -75,7 +75,7 @@
 {% endmacro %}
 
 {% macro populate_data_card_weapon_table(weapon) %}
-    <tr>
+    <tr >
         <td>{{weapon.name}}</td>
         <td>{{weapon.range}}</td>
         <td>{{weapon.type}}</td>
@@ -91,13 +91,13 @@
 
 {% macro create_data_card(model) %}
 
-    <div class="data-card-div" style="width:100%;">
-        {# <p> {{model.name}} | {{ model.points }}</p> #}
-        <table class="data-card-table-top">
+    <div class="data-card-div">
+        <p> {{model.name}} -------> {{ model.points }} Points</p>
+        <table class="data-card-table">
             {{ data_card_table_heading_for_model( model.keys) }}
             {{ populate_data_card_model_table(model) }}
         </table>
-        <table class="data-card-table-bottom">
+        <table class="data-card-table">
             {{ data_card_table_heading_for_weapons(model.keys) }}
             {% for wg in model.wargear %}
                 {{ populate_data_card_weapon_table(wg)}}
@@ -108,7 +108,17 @@
         {% endfor %}
         <p> Specialization: {{ model.specialization.name }} : {{ model.specialization.passive }}</p>
 
-    
-</table>
     </div>
+{% endmacro %}
+
+{% macro render_tactic(tactic) %}
+
+   <div class="tactic-cell">
+        <div class="tactic-cell-heading-div">
+            {{ tactic.name }}
+        </div>
+        <div class="tactic-cell-text-div">
+            {{ tactic.text }}
+        </div>
+   </div>
 {% endmacro %}

@@ -29,7 +29,7 @@ def generate_report(output_dir: str):
         'type' : 'HEAVY TYPE 6',
         'strength' : 'STRENGTH',
         'ap' : '-AP',
-        'damage' : "damage",
+        'damage' : "DAMAGE",
         'abilities' : [dummy_ability]
     }
 
@@ -73,9 +73,9 @@ def generate_report(output_dir: str):
     document_context_map = {
         'cheatsheet': {
             'cheatsheetRows': ['first', 'second', 'third'],
-            'common_tactics' : [dummy_tactic, dummy_tactic],
-            'faction_tactics' : [dummy_tactic, dummy_tactic],
-            'specialist_tactics' : [dummy_tactic, dummy_tactic],
+            'common_tactics' : [dummy_tactic, dummy_tactic,dummy_tactic, dummy_tactic,dummy_tactic, dummy_tactic,dummy_tactic],
+            'faction_tactics' : [dummy_tactic, dummy_tactic,dummy_tactic, dummy_tactic,dummy_tactic, dummy_tactic,dummy_tactic, dummy_tactic,dummy_tactic, dummy_tactic,dummy_tactic, dummy_tactic],
+            'specialist_tactics' : [dummy_tactic, dummy_tactic,dummy_tactic, dummy_tactic],
             'unique_models' : [dummy_model,dummy_model,dummy_model]
         },
         'datacards': {
