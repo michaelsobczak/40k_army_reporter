@@ -1,0 +1,19 @@
+{% extends "web/base.html.jinja" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="jumbotron">
+            <h1 class="display-12">{{ roster.name }}</h2>
+            <p class="lead">{{ roster.player_name }}</p>
+            <p>Reports</p>
+            <ul class="list-group">
+                <li class="list-group-item"><a href="/report/{{ roster.id }}/roster">Roster</a></li>
+                <li class="list-group-item"><a href="/report/{{ roster.id }}/cheatsheet">Cheatsheet</a></li>
+                <li class="list-group-item"><a href="/report/{{ roster.id }}/datacards">Datacards</a></li>
+            </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
