@@ -66,6 +66,9 @@ class Figure(Base):
         back_populates='figures'
     )
 
+    def __str__(self):
+        return self.figure_type
+
 class Wargear(Base):
     __tablename__ = 'wargear'
     id = Column(Integer, primary_key=True)
@@ -87,6 +90,10 @@ class Wargear(Base):
         secondary=roster_entry_wargear_table,
         back_populates='wargear'
     )
+
+    def __str__(self):
+        return self.name
+
 class Keyword(Base):
     __tablename__ = 'keyword'
     id = Column(Integer, primary_key=True)
@@ -97,6 +104,9 @@ class Keyword(Base):
         secondary=figure_keyword_table,
         back_populates='keywords'
     )
+
+    def __str__(self):
+        return self.label
 
 class Ability(Base):
     __tablename__ = 'ability'
@@ -116,6 +126,9 @@ class Ability(Base):
         back_populates='abilities'
     )
 
+    def __str__(self):
+        return self.name
+
 class Specialization(Base):
     __tablename__ = 'specialization'
     id = Column(Integer, primary_key=True)
@@ -123,6 +136,8 @@ class Specialization(Base):
     tactic_id = Column(Integer, ForeignKey('tactic.id'))
     tactic = relationship('Tactic')
 
+    def __str__(self):
+        return self.name
 class Tactic(Base):
     __tablename__ = 'tactic'
     id = Column(Integer, primary_key=True)
@@ -133,6 +148,8 @@ class Tactic(Base):
     keyword_id = Column(Integer, ForeignKey('keyword.id'))
     keyword = relationship('Keyword')
 
+    def __str__(self):
+        return self.name
 class Roster(Base):
     __tablename__ = 'roster'
     id = Column(Integer, primary_key=True)
@@ -140,6 +157,8 @@ class Roster(Base):
 
     entries = relationship('RosterEntry', cascade='delete')
 
+    def __str__(self):
+        return self.name
 class RosterEntry(Base):
     __tablename__ = 'rosterentry'
     id = Column(Integer, primary_key=True)
@@ -159,4 +178,7 @@ class RosterEntry(Base):
         secondary=roster_entry_wargear_table,
         back_populates='roster_entries'
     )
+
+    def __str__(self):
+        return self.name
 
