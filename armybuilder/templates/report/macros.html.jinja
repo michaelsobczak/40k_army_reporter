@@ -39,7 +39,7 @@
     </table>
 {% endmacro %}
 
-{% macro data_card_table_heading_for_model(column_headings) %}
+{% macro data_card_table_heading_for_model() %}
     <tr class="table-heading">
         <th>Name</th>
         <th>M</th>
@@ -68,10 +68,10 @@
 
 {% macro populate_data_card_model_table(model) %}
     <tr>
-        <td>{{model.model_type}}</td>
+        <td>{{model.figure_type}}</td>
         <td>{{model.move}}</td>
         <td>{{model.weapon_skill}}</td>
-        <td>{{model.balistic_skill}}</td>
+        <td>{{model.ballistic_skill}}</td>
         <td>{{model.strength}}</td>
         <td>{{model.toughness}}</td>
         <td>{{model.wounds}}</td>
@@ -99,10 +99,10 @@
 {% macro create_data_card(model) %}
 
     <div class="data-card-div">
-        <p> {{model.name}} </p>
+        <p> {{model.figure_name}} </p>
         <p class="points-text"> {{ model.points }} Points </p>
         <table class="data-card-table">
-            {{ data_card_table_heading_for_model( model.keys) }}
+            {{ data_card_table_heading_for_model() }}
             {{ populate_data_card_model_table(model) }}
         </table>
         <table class="data-card-table">

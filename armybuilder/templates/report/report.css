@@ -38,6 +38,7 @@ td {
     width: 50%;
     padding: 1%;
     position: relative;
+    float: left;
 }
 
 .data-card-table {
@@ -54,12 +55,17 @@ td {
     background-color: #f8422a;
 }
 
+h2.tactic_label {
+  float: left;
+  width: 100%;
+}
 .tactic-cell {
   width : 20%;
-  height: 20%;
+  height: 30%;
   background-color: gainsboro;
   margin: 0.5%;
   display: inline-block;
+  float: left;
 }
 
 .tactic-cell-heading-div {
