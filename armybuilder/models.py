@@ -103,7 +103,7 @@ class Keyword(Base):
     id = Column(Integer, primary_key=True)
     label = Column(Text)
     faction_keyword = Column(Boolean, default=False)
-
+    names = Column(Text)
     figures = relationship(
         'Figure',
         secondary=figure_keyword_table,
