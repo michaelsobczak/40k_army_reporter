@@ -18,6 +18,7 @@ def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
         os.makedirs(output_dir)
 
     dummy_roster = db.session.query(Roster).get(roster_id)
+    print(dummy_roster)
     def dummy_tactic():
         return db.session.query(Tactic).order_by(func.random()).first()
     
