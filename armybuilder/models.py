@@ -42,7 +42,7 @@ roster_entry_wargear_table = make_secondary_table('rosterentry', 'wargear')
 faction_ability_table = make_secondary_table('faction', 'ability')
 figure_faction_table = make_secondary_table('figure', 'faction')
 tactic_faction_table = make_secondary_table('tactic', 'faction')
-
+roster_faction_table = make_secondary_table('roster', 'faction')
 class Figure(Base):
     __tablename__ = 'figure'
     id = Column(Integer, primary_key=True)
@@ -188,6 +188,7 @@ class Roster(Base):
     name = Column(Text)
     player_name = Column(Text)
 
+    factions = relationship('Faction', secondary=roster_faction_table, back_populates='rosters', lazy='subquery')
     entries = relationship('RosterEntry', cascade='delete', lazy='subquery')
 
     def __str__(self):
@@ -239,4 +240,8 @@ class Faction(Base):
     )
     tactics = relationship('Tactic',
         secondary=tactic_faction_table,
+        back_populates='factions')
+
+    rosters = relationship('Roster',
+        secondary=roster_faction_table,
         back_populates='factions')

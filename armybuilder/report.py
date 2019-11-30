@@ -27,7 +27,6 @@ def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
 
     document_context_map = {
         'cheatsheet': {
-            'cheatsheetRows': ['first', 'second', 'third'],
             'common_tactics' : [dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic()],
             'faction_tactics' : [dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic()],
             'specialist_tactics' : [dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic()],
