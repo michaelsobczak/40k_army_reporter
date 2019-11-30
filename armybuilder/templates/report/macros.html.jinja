@@ -20,6 +20,8 @@
     </tr>
 {% endmacro %}
 
+
+
 {% macro roster_table_heading() %}
     <tr class="table-heading">
         <th> Id </th>
@@ -89,9 +91,11 @@
         <td>{{weapon.strength}}</td>
         <td>{{weapon.ap}}</td>
         <td>{{weapon.damage}}</td>
+        <td>
         {% for ability in weapon.abilities %}
-            <td>{{ability.name}} : {{ability.text}}</td>
+            {{ability.name}}
         {% endfor %}
+        </td>
         
     </tr>
 {% endmacro %}
@@ -114,11 +118,11 @@
         </table>
         <div class="data-card-abilities">
             {% for ability in roster_entry.figure.abilities %}
-                <p>{{ability.name}} : {{ability.text}}</p>
+                <p><b>{{ability.name}}</b>: {{ability.text}}</p>
             {% endfor %}
         </div>
         {% if roster_entry.specialization %}
-        <p> Specialization: {{ roster_entry.specialization.name }} : {{ roster_entry.specialization.passive }}</p>
+        <p><b>Specialization {{ roster_entry.specialization.name }}</b></p><p>{{ roster_entry.specialization.passive }}</p>
         {% else %}
         <p> Specialization:</p>
         {% endif %}
