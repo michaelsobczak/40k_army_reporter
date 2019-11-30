@@ -25,10 +25,20 @@ def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
     def dummy_model():
         return db.session.query(Figure).order_by(func.random()).first()
 
+    common_keyword = db.session.query(Keyword).filter_by(label='Common').first()
+    if not common_keyword:
+        print(f'No Common Keyword found, exiting')
+        return
+    common_faction = db.session.query(Faction).filter_by(keyword_id=common_keyword.id).first()
+    if not common_faction:
+        print(f'No Common Faction found, exiting')
+    
+    common_tactics = db.session.query(Tactic).filter(Tactic.factions.any(Faction.id == common_faction.id)).all()
+
 
     document_context_map = {
         'cheatsheet': {
-            'common_tactics' : [dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic()],
+            'common_tactics' : common_tactics,
             'faction_tactics' : [dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic()],
             'specialist_tactics' : [dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic()],
             'unique_models' : [dummy_model(),dummy_model(),dummy_model()]
