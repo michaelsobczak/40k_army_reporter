@@ -35,15 +35,15 @@ class TacticView(ModelView):
     column_list = ['name', 'text', 'cost', 'factions']
     column_editable_list = ['name', 'text', 'cost', 'factions']
 
-admin.add_view(ModelView(Figure, db.session))
-admin.add_view(ModelView(Wargear, db.session))
-admin.add_view(ModelView(Keyword, db.session))
-admin.add_view(ModelView(Ability, db.session))
-admin.add_view(ModelView(Specialization, db.session))
-admin.add_view(TacticView(Tactic, db.session))
-admin.add_view(RosterView(Roster, db.session))
-admin.add_view(RosterEntryView(RosterEntry, db.session))
-admin.add_view(ModelView(Faction, db.session))
+admin.add_view(ModelView(Figure, db.session, category='Pieces'))
+admin.add_view(ModelView(Wargear, db.session, category='Pieces'))
+admin.add_view(ModelView(Keyword, db.session, category='Metadata'))
+admin.add_view(ModelView(Ability, db.session, category='Rules'))
+admin.add_view(ModelView(Specialization, db.session, category='Rules'))
+admin.add_view(TacticView(Tactic, db.session, category='Rules'))
+admin.add_view(RosterView(Roster, db.session, category='Roster'))
+admin.add_view(RosterEntryView(RosterEntry, db.session, category='Roster'))
+admin.add_view(ModelView(Faction, db.session, category='Metadata'))
 
 
 
