@@ -245,3 +245,6 @@ class Faction(Base):
     rosters = relationship('Roster',
         secondary=roster_faction_table,
         back_populates='factions')
+
+    def __str__(self):
+        return self.name
