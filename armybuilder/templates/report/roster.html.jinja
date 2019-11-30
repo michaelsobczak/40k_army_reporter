@@ -1,6 +1,15 @@
 {% extends "report/base.html.jinja" %}
 {% block content %}
-
+<div class="roster-container">
+<div class="kill-team-bio-container">
+    <div class="bio-field-container">
+        <div class="bio-label player-name">
+            Player \n Name
+        </div>
+        <div class="bio-entry player-name">
+            {{ player_name }}
+        </div>
+    </div>
 <ul>
     <li>  Player Name : {{ player_name }}</li>
     <li>  Kill Team Name : {{ kill_team_name }}</li>
@@ -15,5 +24,5 @@
     {% endfor %}
 
 </table>
-
+</div>
 {% endblock %}

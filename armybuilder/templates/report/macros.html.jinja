@@ -92,7 +92,8 @@
 {% macro create_data_card(model) %}
 
     <div class="data-card-div">
-        <p> {{model.name}} -------> {{ model.points }} Points</p>
+        <p> {{model.name}} </p>
+        <p class="points-text"> {{ model.points }} Points </p>
         <table class="data-card-table">
             {{ data_card_table_heading_for_model( model.keys) }}
             {{ populate_data_card_model_table(model) }}
