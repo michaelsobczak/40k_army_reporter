@@ -1,6 +1,6 @@
 {% extends "report/base.html.jinja" %}
 {% block content %}
-    {% for model in models %}
-        {{ macros.create_data_card(model) }}
+    {% for roster_entry in roster %}
+        {{ macros.create_data_card(roster_entry) }}
     {% endfor %}
 {% endblock %}

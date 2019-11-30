@@ -7,7 +7,7 @@
             Player Name
         </div>
         <div class="bio-entry player-name">
-            {{ player_name }}
+            {{ roster.player_name }}
         </div>
     </div>
     <div class="bio-field-container">
@@ -15,7 +15,7 @@
             Kill Team Name
         </div>
         <div class="bio-entry kill-team-name">
-            {{ kill_team_name }}
+            {{ roster.name }}
         </div>
     </div>
     <div class="bio-field-container">
@@ -23,7 +23,7 @@
             Faction
         </div>
         <div class="bio-entry faction-name">
-            {{ faction }}
+            {{ roster.factions }}
         </div>
     </div>
     <div class="bio-field-container">
@@ -31,7 +31,7 @@
             Subfaction
         </div>
         <div class="bio-entry sub-faction-name">
-            {{ sub_faction }}
+            {{ roster.factions[1] }}
         </div>
     </div>
     <div class="bio-field-container">
@@ -39,7 +39,7 @@
             Points
         </div>
         <div class="bio-entry points-name">
-            {{ points }}
+            {{ roster.points }}
         </div>
     </div>
 </div>
