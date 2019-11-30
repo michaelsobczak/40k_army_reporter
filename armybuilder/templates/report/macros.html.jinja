@@ -3,6 +3,7 @@
         {# {% for key,value in roster_entry.items() %}
             <td>{{value}}</td>
         {% endfor %} #}
+        {% print("SHIT")%}
         <td>{{ roster_entry.id }}</td>
         <td>{{ roster_entry.name }}</td>
         <td> {{ roster_entry.figure.name }} + {{ roster_entry.figure.figure_type }}</td>
@@ -96,26 +97,29 @@
     </tr>
 {% endmacro %}
 
-{% macro create_data_card(model) %}
+{% macro create_data_card(roster_entry) %}
 
     <div class="data-card-div">
-        <p> {{model.name}} </p>
-        <p class="points-text"> {{ model.points }} Points </p>
+        <p> {{roster_entry.name}} </p>
+        <p class="points-text"> {{ roster_entry.points }} Points </p>
         <table class="data-card-table">
             {{ data_card_table_heading_for_model() }}
-            {{ populate_data_card_model_table(model) }}
+            {# {{roster_entry.figure }} #}
+            {{ populate_data_card_model_table(roster_entry.figure) }}
         </table>
         <table class="data-card-table">
-            {{ data_card_table_heading_for_weapons(model.keys) }}
-            {% for wg in model.wargear %}
+            {{ data_card_table_heading_for_weapons(roster_entry.keys) }}
+            {% for wg in roster_entry.wargear %}
                 {{ populate_data_card_weapon_table(wg)}}
             {% endfor %}
         </table>
-        {% for ability in model.abilities %}
-            <p>{{ability.name}} : {{ability.text}}</p>
-        {% endfor %}
-        {% if model.specialization %}
-        <p> Specialization: {{ model.specialization.name }} : {{ model.specialization.passive }}</p>
+        {% if roster_entry.abilities %}
+            {% for ability in roster_entry.abilities %}
+                <p>{{ability.name}} : {{ability.text}}</p>
+            {% endfor %}
+        {% endif %}
+        {% if roster_entry.specialization %}
+        <p> Specialization: {{ roster_entry.specialization.name }} : {{ roster_entry.specialization.passive }}</p>
         {% else %}
         <p> Specialization:</p>
         {% endif %}

@@ -15,9 +15,9 @@
         {{ macros.render_tactic(s_tac) }}
     {% endfor %}
 </div>
-    <h2 class="tactic_label"> {{ "Units" }}</h2>
+    {# <h2 class="tactic_label"> {{ "Units" }}</h2>
     {% for model in unique_models %}
         {{ macros.create_data_card(model) }}
-    {% endfor %}
+    {% endfor %} #}
 
 {% endblock %}
