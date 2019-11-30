@@ -3,10 +3,9 @@
         {# {% for key,value in roster_entry.items() %}
             <td>{{value}}</td>
         {% endfor %} #}
-        {% print("SHIT")%}
         <td>{{ roster_entry.id }}</td>
         <td>{{ roster_entry.name }}</td>
-        <td> {{ roster_entry.figure.name }} + {{ roster_entry.figure.figure_type }}</td>
+        <td> {{ roster_entry.figure.name }}  {{ roster_entry.figure.figure_type }}</td>
         <td>
             {% for w in roster_entry.wargear %}
             {{ w.name }}
@@ -100,7 +99,7 @@
 {% macro create_data_card(roster_entry) %}
 
     <div class="data-card-div">
-        <p> {{roster_entry.name}} </p>
+        <p> {{ roster_entry.id }} : {{roster_entry.name}} </p>
         <p class="points-text"> {{ roster_entry.points }} Points </p>
         <table class="data-card-table">
             {{ data_card_table_heading_for_model() }}
@@ -113,11 +112,11 @@
                 {{ populate_data_card_weapon_table(wg)}}
             {% endfor %}
         </table>
-        {% if roster_entry.abilities %}
-            {% for ability in roster_entry.abilities %}
+        <div class="data-card-abilities">
+            {% for ability in roster_entry.figure.abilities %}
                 <p>{{ability.name}} : {{ability.text}}</p>
             {% endfor %}
-        {% endif %}
+        </div>
         {% if roster_entry.specialization %}
         <p> Specialization: {{ roster_entry.specialization.name }} : {{ roster_entry.specialization.passive }}</p>
         {% else %}

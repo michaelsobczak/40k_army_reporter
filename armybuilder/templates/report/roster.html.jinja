@@ -23,7 +23,11 @@
             Faction
         </div>
         <div class="bio-entry faction-name">
-            {{ roster.factions }}
+            {% for faction in roster.factions %}
+                {% if faction.is_subfaction == false %}
+                    {{ faction.name }}
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
     <div class="bio-field-container">
@@ -31,7 +35,11 @@
             Subfaction
         </div>
         <div class="bio-entry sub-faction-name">
-            {{ roster.factions[1] }}
+            {% for faction in roster.factions %}
+                {% if faction.is_subfaction %}
+                    {{ faction.name }}
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
     <div class="bio-field-container">

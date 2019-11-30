@@ -33,6 +33,10 @@ td {
   margin-top: 5pt;
 }
 
+.data-card-abilities {
+  background-color: gainsboro;
+  padding: 0.5%;
+}
 .data-card-div {
     border-style: solid;
     width: 50%;
