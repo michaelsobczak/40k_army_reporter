@@ -4,20 +4,47 @@
 <div class="kill-team-bio-container">
     <div class="bio-field-container">
         <div class="bio-label player-name">
-            Player \n Name
+            Player Name
         </div>
         <div class="bio-entry player-name">
             {{ player_name }}
         </div>
     </div>
-<ul>
-    <li>  Player Name : {{ player_name }}</li>
-    <li>  Kill Team Name : {{ kill_team_name }}</li>
-    <li>  Faction : {{ faction }}</li>
-    <li>  Subfaction : {{ sub_faction }}</li>
-    <li>  Points : {{ points }}</li>
-</ul>
-<table id="roster-table">
+    <div class="bio-field-container">
+        <div class="bio-label kill-team-name">
+            Kill Team Name
+        </div>
+        <div class="bio-entry kill-team-name">
+            {{ kill_team_name }}
+        </div>
+    </div>
+    <div class="bio-field-container">
+        <div class="bio-label faction-name">
+            Faction
+        </div>
+        <div class="bio-entry faction-name">
+            {{ faction }}
+        </div>
+    </div>
+    <div class="bio-field-container">
+        <div class="bio-label sub-faction-name">
+            Subfaction
+        </div>
+        <div class="bio-entry sub-faction-name">
+            {{ sub_faction }}
+        </div>
+    </div>
+    <div class="bio-field-container">
+        <div class="bio-label points-name">
+            Points
+        </div>
+        <div class="bio-entry points-name">
+            {{ points }}
+        </div>
+    </div>
+</div>
+
+<table class="roster-table">
     {{ macros.roster_table_heading(models[0].keys()) }}
     {% for m in models %}
         {{ macros.roster_row(m) }}
