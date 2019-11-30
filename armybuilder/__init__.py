@@ -24,6 +24,7 @@ db = SQLAlchemy(app, model_class=Base)
 admin = Admin(app)
 
 class RosterEntryView(ModelView):
+    column_list = ['name', 'figure', 'specialization', 'roster', 'points', 'wargear']
     column_editable_list = ['name', 'figure', 'specialization', 'roster', 'wargear']
 
 admin.add_view(ModelView(Figure, db.session))

@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, ForeignKey, Integer, Text, create_engine, Table
+from sqlalchemy import Column, ForeignKey, Integer, Text, create_engine, Table, Boolean
 from sqlalchemy.orm import relationship
 import os
 from typing import Type
@@ -102,6 +102,7 @@ class Keyword(Base):
     __tablename__ = 'keyword'
     id = Column(Integer, primary_key=True)
     label = Column(Text)
+    faction_keyword = Column(Boolean, default=False)
 
     figures = relationship(
         'Figure',
@@ -139,6 +140,7 @@ class Specialization(Base):
     name = Column(Text)
     tactic_id = Column(Integer, ForeignKey('tactic.id'))
     tactic = relationship('Tactic')
+    passive = Column(Text)
 
     def __str__(self):
         return self.name
@@ -148,6 +150,7 @@ class Tactic(Base):
     name = Column(Text)
     cost = Column(Integer)
     text = Column(Text)
+    
 
     keyword_id = Column(Integer, ForeignKey('keyword.id'))
     keyword = relationship('Keyword')
@@ -186,3 +189,9 @@ class RosterEntry(Base):
     def __str__(self):
         return self.name
 
+
+    @property
+    def points(self):
+        wargear_points = sum([ w.points if w.points else 0 for w in self.wargear ]) if self.wargear else 0
+        figure_points = self.figure.points if self.figure.points else 0
+        return wargear_points + figure_points
