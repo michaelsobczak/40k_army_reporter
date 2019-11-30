@@ -5,7 +5,7 @@
         {% endfor %} #}
         <td>{{ roster_entry.id }}</td>
         <td>{{ roster_entry.name }}</td>
-        <td>{{ roster_entry.model_type }}</td>
+        <td> {{ roster_entry.figure.name }} + {{ roster_entry.figure.figure_type }}</td>
         <td>
             {% for w in roster_entry.wargear %}
             {{ w.name }}
@@ -16,11 +16,14 @@
     </tr>
 {% endmacro %}
 
-{% macro roster_table_heading(column_headings) %}
+{% macro roster_table_heading() %}
     <tr class="table-heading">
-    {% for key in (column_headings|list)[:6] %}
-        <th>{{ key }}</th>
-    {% endfor %}
+        <th> Id </th>
+        <th> Name </th>
+        <th> Model Type </th>
+        <th> Wargear </th>
+        <th> Specialization </th>
+        <th> Point </th>
     </tr>
 {% endmacro %}
 

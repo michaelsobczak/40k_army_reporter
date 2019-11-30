@@ -1,7 +1,8 @@
 from flask import render_template
 from typing import Dict, Any
 import os
-from . import app
+from . import app,db
+from .models import *
 
 def render_report_template(template_name: str, context: Dict[str, Any]) -> str:
     with app.app_context():
@@ -69,6 +70,7 @@ def generate_report(output_dir: str):
         'keywords' : ["Keyword1", "Keyword2"]
 
     }
+    dummy_roster = db.session.query(Roster).all()[1]
 
     document_context_map = {
         'cheatsheet': {
@@ -82,12 +84,7 @@ def generate_report(output_dir: str):
             'models' : [dummy_model, dummy_model, dummy_model],
         },
         'roster': {
-            'player_name' : 'Tychus Findlay',
-            'kill_team_name' : 'Da Ladz',
-            'faction' : 'Ork',
-            'sub_faction' : 'Evil Sunz',
-            'points' : '125',
-            'models' : [dummy_model, dummy_model, dummy_model]
+            'roster' : dummy_roster
         }
     }
 

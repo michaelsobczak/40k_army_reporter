@@ -122,13 +122,15 @@ class Ability(Base):
     wargear = relationship(
         'Wargear',
         secondary=wargear_ability_table,
-        back_populates='abilities'
+        back_populates='abilities',
+        lazy='subquery'
     )
 
     figures = relationship(
         'Figure',
         secondary=figure_ability_table,
-        back_populates='abilities'
+        back_populates='abilities',
+        lazy='subquery'
     )
 
     def __str__(self):
@@ -163,7 +165,7 @@ class Roster(Base):
     name = Column(Text)
     player_name = Column(Text)
 
-    entries = relationship('RosterEntry', cascade='delete')
+    entries = relationship('RosterEntry', cascade='delete', lazy='subquery')
 
     def __str__(self):
         return self.name
@@ -174,10 +176,10 @@ class RosterEntry(Base):
     name = Column(Text)
 
     figure_id = Column(Integer, ForeignKey('figure.id'))
-    figure = relationship('Figure')
+    figure = relationship('Figure', lazy='subquery')
 
     specialization_id = Column(Integer, ForeignKey('specialization.id'))
-    specialization = relationship('Specialization')
+    specialization = relationship('Specialization', lazy='subquery')
 
     roster_id = Column(Integer, ForeignKey('roster.id'))
     roster = relationship('Roster')
@@ -185,7 +187,8 @@ class RosterEntry(Base):
     wargear = relationship(
         'Wargear',
         secondary=roster_entry_wargear_table,
-        back_populates='roster_entries'
+        back_populates='roster_entries',
+        lazy='subquery'
     )
 
     def __str__(self):

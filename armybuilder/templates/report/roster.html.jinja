@@ -45,9 +45,9 @@
 </div>
 
 <table class="roster-table">
-    {{ macros.roster_table_heading(models[0].keys()) }}
-    {% for m in models %}
-        {{ macros.roster_row(m) }}
+    {{ macros.roster_table_heading() }}
+    {% for roster_entry in roster.entries %}
+        {{ macros.roster_row(roster_entry) }}
     {% endfor %}
 
 </table>
