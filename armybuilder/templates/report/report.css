@@ -2,35 +2,73 @@ td {
   text-align: center;
   background-color: beige;
 }
-  .data-card-div {
-      border-style: solid;
-      width: 50%;
-      padding: 1%;
-  }
+.roster-container {
+  width: 70%;
+  margin: 0 auto;
+}
+.bio-field-container {
+  display: inline-block;
+  width: 50%;
+}
 
-  .data-card-table {
-    width: 100%;
-  }
+.bio-label {
+  display: inline-block;
+  background-color: #f8422a;
+  width: 20%;
+  /* height: 40px; */
+  padding-right: 2%;
+  text-align: right;
+  vertical-align: center;
+  font-weight: bold;
+}
 
-  .table-heading {
-      background-color: #f8422a;
-  }
+.bio-entry {
+  display: inline-block;
+  width: 60%;
+  /* height: 40px; */
+  background-color: gainsboro;
+  vertical-align: center;
+}
+.roster-table {
+  width: 100%;
+}
 
-  .tactic-cell {
-    width : 20%;
-    height: 20%;
-    background-color: gainsboro;
-    margin: 0.5%;
-    display: inline-block;
-  }
-
-  .tactic-cell-heading-div {
-    text-align: center;
-    background-color: #f8422a;
+.data-card-div {
+    border-style: solid;
+    width: 50%;
     padding: 1%;
-  }
+    position: relative;
+}
 
-  .tactic-cell-text-div {
-    padding: 3%;
+.data-card-table {
+  width: 100%;
+}
 
-  }
+.points-text {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  margin: 3%;
+}
+.table-heading {
+    background-color: #f8422a;
+}
+
+.tactic-cell {
+  width : 20%;
+  height: 20%;
+  background-color: gainsboro;
+  margin: 0.5%;
+  display: inline-block;
+}
+
+.tactic-cell-heading-div {
+  text-align: center;
+  background-color: #f8422a;
+  padding: 1%;
+}
+
+.tactic-cell-text-div {
+  padding: 3%;
+
+}
