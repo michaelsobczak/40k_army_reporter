@@ -39,6 +39,9 @@ figure_keyword_table = make_secondary_table('figure', 'keyword')
 figure_ability_table = make_secondary_table('figure', 'ability')
 wargear_ability_table = make_secondary_table('wargear', 'ability')
 roster_entry_wargear_table = make_secondary_table('rosterentry', 'wargear')
+faction_ability_table = make_secondary_table('faction', 'ability')
+figure_faction_table = make_secondary_table('figure', 'faction')
+tactic_faction_table = make_secondary_table('tactic', 'faction')
 
 class Figure(Base):
     __tablename__ = 'figure'
@@ -56,6 +59,11 @@ class Figure(Base):
     leadership = Column(Text)
     save = Column(Text)
     max_number = Column(Integer)
+
+    factions = relationship(
+        'Faction', secondary=figure_faction_table,
+        back_populates='figures'
+    )
 
     keywords = relationship(
         'Keyword',
@@ -102,7 +110,6 @@ class Keyword(Base):
     __tablename__ = 'keyword'
     id = Column(Integer, primary_key=True)
     label = Column(Text)
-    faction_keyword = Column(Boolean, default=False)
     names = Column(Text)
     figures = relationship(
         'Figure',
@@ -131,6 +138,12 @@ class Ability(Base):
         back_populates='abilities'
     )
 
+    factions = relationship(
+        'Faction',
+        secondary=faction_ability_table,
+        back_populates='abilities'
+    )
+
     def __str__(self):
         return self.name
 
@@ -154,6 +167,10 @@ class Tactic(Base):
 
     keyword_id = Column(Integer, ForeignKey('keyword.id'))
     keyword = relationship('Keyword')
+
+    factions = relationship('Faction',
+        secondary=tactic_faction_table,
+        back_populates='tactics')
 
     def __str__(self):
         return self.name
@@ -197,3 +214,20 @@ class RosterEntry(Base):
         wargear_points = sum([ w.points if w.points else 0 for w in self.wargear ]) if self.wargear else 0
         figure_points = self.figure.points if self.figure.points else 0
         return wargear_points + figure_points
+
+class Faction(Base):
+    __tablename__ = 'faction'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text)
+
+    keyword_id = Column(Integer, ForeignKey('keyword.id'))
+    keyword = relationship('Keyword')
+
+    abilities = relationship('Ability', secondary=faction_ability_table, back_populates='factions')
+    figures = relationship(
+        'Figure', secondary=figure_faction_table,
+        back_populates='factions'
+    )
+    tactics = relationship('Tactic',
+        secondary=tactic_faction_table,
+        back_populates='factions')

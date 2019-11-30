@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 import os
-from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry
+from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry, Faction
 
 app = Flask(__name__)
 
@@ -35,6 +35,7 @@ admin.add_view(ModelView(Specialization, db.session))
 admin.add_view(ModelView(Tactic, db.session))
 admin.add_view(ModelView(Roster, db.session))
 admin.add_view(RosterEntryView(RosterEntry, db.session))
+admin.add_view(ModelView(Faction, db.session))
 
 
 
