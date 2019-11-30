@@ -22,6 +22,10 @@ db = SQLAlchemy(app, model_class=Base)
 
 # set up admin stuff
 admin = Admin(app)
+
+class RosterEntryView(ModelView):
+    column_editable_list = ['name', 'figure', 'specialization', 'roster', 'wargear']
+
 admin.add_view(ModelView(Figure, db.session))
 admin.add_view(ModelView(Wargear, db.session))
 admin.add_view(ModelView(Keyword, db.session))
@@ -29,7 +33,7 @@ admin.add_view(ModelView(Ability, db.session))
 admin.add_view(ModelView(Specialization, db.session))
 admin.add_view(ModelView(Tactic, db.session))
 admin.add_view(ModelView(Roster, db.session))
-admin.add_view(ModelView(RosterEntry, db.session))
+admin.add_view(RosterEntryView(RosterEntry, db.session))
 
 
 
