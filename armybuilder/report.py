@@ -37,7 +37,8 @@ def generate_report(output_dir: str):
         'id' : 0,
         'name' : 'TACTIC_NAME',
         'cost' : 2,
-        'text' : 'TACTIC_TEXT'
+        'text' : 'TACTIC_TEXT',
+        'faction' : 'TACTIC_FACTION'
     }
 
     dummy_specialization = {
@@ -63,16 +64,23 @@ def generate_report(output_dir: str):
         'attacks' : 2,
         'leadership' : 6,
         'save' : 6,
-        'abilities' : [dummy_ability]
-
+        'abilities' : [dummy_ability],
+        'faction' : 'MODEL_FACTION',
+        'keywords' : ["Keyword1", "Keyword2"]
 
     }
 
     document_context_map = {
         'cheatsheet': {
-            'cheatsheetRows': ['first', 'second', 'third']
+            'cheatsheetRows': ['first', 'second', 'third'],
+            'common_tactics' : [dummy_tactic, dummy_tactic],
+            'faction_tactics' : [dummy_tactic, dummy_tactic],
+            'specialist_tactics' : [dummy_tactic, dummy_tactic],
+            'unique_models' : [dummy_model,dummy_model,dummy_model]
         },
-        'datacards': {},
+        'datacards': {
+            'models' : [dummy_model, dummy_model, dummy_model],
+        },
         'roster': {
             'player_name' : 'Tychus Findlay',
             'kill_team_name' : 'Da Ladz',
