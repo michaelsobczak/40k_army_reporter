@@ -13,5 +13,6 @@ Setup:
 To run the app:
     pipenv shell
     FLASK_DEBUG=true FLASK_APP=armybuilder flask run
-    
 
+To do docker stuff:
+    - Go install it from docker.io, you need to make account :(

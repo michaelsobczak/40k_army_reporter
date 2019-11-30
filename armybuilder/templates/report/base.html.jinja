@@ -1,11 +1,12 @@
 {% import "report/macros.html.jinja" as macros %}
+<style>
+    {% include "report/report.css" %}
+</style>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:svg="http://www.w3.org/2000/svg"
       xmlns:vml="urn:schemas-microsoft-com:vml">
     <head>
-        <link rel="stylesheet" href="/static/report.css">
-
         {% if title %}
         <title>{{ title }}</title>
         {% else %}
