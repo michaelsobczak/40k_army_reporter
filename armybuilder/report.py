@@ -11,7 +11,7 @@ def render_report_template(template_name: str, context: Dict[str, Any]) -> str:
             template_name, **context
         )
 
-def generate_report(output_dir: str, roster_id: int):
+def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
 
     # make the output dir if it exists
     if not os.path.exists(output_dir):
@@ -41,6 +41,7 @@ def generate_report(output_dir: str, roster_id: int):
         }
     }
 
+    report_data = {}
     # now render each of the templates and save the files
     for report, ctx in document_context_map.items():
         report_name = os.path.join(output_dir, f'{report}.html')
@@ -49,6 +50,8 @@ def generate_report(output_dir: str, roster_id: int):
         with open(report_name, 'w') as report_outfile:
             report_html_string = render_report_template(template_name, ctx)
             report_outfile.write(report_html_string)
+            report_data[report] = report_html_string
+    return report_data
 
     
 
