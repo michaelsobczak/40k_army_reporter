@@ -33,7 +33,7 @@ def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
             'unique_models' : [dummy_model(),dummy_model(),dummy_model()]
         },
         'datacards': {
-            'models' : [dummy_model(), dummy_model(), dummy_model()],
+            'roster' : dummy_roster,
         },
         'roster': {
             'roster' : dummy_roster
