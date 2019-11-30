@@ -11,7 +11,11 @@
             {{ w.name }}
             {% endfor %}
         </td>
+        {% if roster_entry.specialization %}
         <td>{{ roster_entry.specialization.name }}</td>
+        {% else %}
+        <td></td>
+        {% endif %}
         <td>{{ roster_entry.points }}</td>
     </tr>
 {% endmacro %}
@@ -110,8 +114,11 @@
         {% for ability in model.abilities %}
             <p>{{ability.name}} : {{ability.text}}</p>
         {% endfor %}
+        {% if model.specialization %}
         <p> Specialization: {{ model.specialization.name }} : {{ model.specialization.passive }}</p>
-
+        {% else %}
+        <p> Specialization:</p>
+        {% endif %}
     </div>
 {% endmacro %}
 

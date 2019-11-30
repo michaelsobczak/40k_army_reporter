@@ -62,18 +62,21 @@ class Figure(Base):
 
     factions = relationship(
         'Faction', secondary=figure_faction_table,
-        back_populates='figures'
+        back_populates='figures',
+        lazy='subquery'
     )
 
     keywords = relationship(
         'Keyword',
         secondary=figure_keyword_table,
-        back_populates='figures')
-
+        back_populates='figures',
+        lazy='subquery'
+    )
     abilities = relationship(
         'Ability',
         secondary=figure_ability_table,
-        back_populates='figures'
+        back_populates='figures',
+        lazy='subquery'
     )
 
     def __str__(self):
@@ -94,13 +97,15 @@ class Wargear(Base):
     abilities = relationship(
         'Ability',
         secondary=wargear_ability_table,
-        back_populates='wargear'
+        back_populates='wargear',
+        lazy='subquery'
     )
 
     roster_entries = relationship(
         'RosterEntry',
         secondary=roster_entry_wargear_table,
-        back_populates='wargear'
+        back_populates='wargear',
+        lazy='subquery'
     )
 
     def __str__(self):
@@ -114,7 +119,8 @@ class Keyword(Base):
     figures = relationship(
         'Figure',
         secondary=figure_keyword_table,
-        back_populates='keywords'
+        back_populates='keywords',
+        lazy='subquery'
     )
 
     def __str__(self):
@@ -226,7 +232,7 @@ class Faction(Base):
     keyword_id = Column(Integer, ForeignKey('keyword.id'))
     keyword = relationship('Keyword')
 
-    abilities = relationship('Ability', secondary=faction_ability_table, back_populates='factions')
+    abilities = relationship('Ability', secondary=faction_ability_table, back_populates='factions', lazy='subquery')
     figures = relationship(
         'Figure', secondary=figure_faction_table,
         back_populates='factions'
