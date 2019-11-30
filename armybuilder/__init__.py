@@ -4,7 +4,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager
 import os
-from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry, Faction, User
+from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry, Faction, User, Role
 
 app = Flask(__name__)
 
@@ -40,6 +40,10 @@ class TacticView(ModelView):
     column_list = ['name', 'text', 'cost', 'factions']
     column_editable_list = ['name', 'text', 'cost', 'factions']
 
+class UserView(ModelView):
+    column_list = ['username', 'email', 'roles', 'rosters']
+    column_editable_list = ['username', 'email', 'roles', 'rosters']
+
 admin.add_view(ModelView(Figure, db.session, category='Pieces'))
 admin.add_view(ModelView(Wargear, db.session, category='Pieces'))
 admin.add_view(ModelView(Keyword, db.session, category='Metadata'))
@@ -49,7 +53,8 @@ admin.add_view(TacticView(Tactic, db.session, category='Rules'))
 admin.add_view(RosterView(Roster, db.session, category='Roster'))
 admin.add_view(RosterEntryView(RosterEntry, db.session, category='Roster'))
 admin.add_view(ModelView(Faction, db.session, category='Metadata'))
-admin.add_view(ModelView(User, db.session, category='User'))
+admin.add_view(UserView(User, db.session, category='User'))
+admin.add_view(ModelView(Role, db.session, category='User'))
 
 
 from . import views, report

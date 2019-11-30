@@ -12,9 +12,21 @@ def get_sqlalchemy_uri() -> str:
     # triple quotes for sqlite, update this with dialect change
     uri = f'{DB_DIALECT}:///{DB_PATH}'
 
+    if 'RDS_HOSTNAME' in os.environ:
+        print('Running on cloud, using database service...')
+        host = os.environ['RDS_HOSTNAME']
+        port = os.environ['RDS_PORT']
+        name = os.environ['RDS_DB_NAME']
+        username = os.environ['RDS_USERNAME']
+        password = os.environ['RDS_PASSWORD']
+        # postgresql://scott:tiger@localhost:5432/mydatabase
+        uri = f'postgresql://{username}:{password}@{host}:{port}/{name}'
+    else:
+        print('No database service found, using sqlite...')
     # For SQLite, make sure DB dir exists and create the tables
     # Update this if dialect changes
     if not os.path.exists(DB_PATH):
+        
         db_dir = os.path.dirname(DB_PATH)
         if not os.path.exists(db_dir):
             os.makedirs(db_dir)
@@ -46,6 +58,8 @@ figure_faction_table = make_secondary_table('figure', 'faction')
 tactic_faction_table = make_secondary_table('tactic', 'faction')
 roster_faction_table = make_secondary_table('roster', 'faction')
 user_roster_table = make_secondary_table('user', 'roster')
+user_role_table = make_secondary_table('user', 'role')
+
 class User(UserMixin, Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
@@ -70,6 +84,25 @@ class User(UserMixin, Base):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    roles = relationship(
+        'Role',
+        secondary=user_role_table,
+        back_populates='users'
+    )
+
+class Role(Base):
+    __tablename__ = 'role'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text)
+
+    users = relationship(
+        'User',
+        secondary=user_role_table,
+        back_populates='roles'
+    )
+
+    def __str__(self):
+        return self.name
 
 class Figure(Base):
     __tablename__ = 'figure'

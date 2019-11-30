@@ -17,8 +17,8 @@ def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    dummy_roster = db.session.query(Roster).get(roster_id)
-    print(dummy_roster)
+    roster = db.session.query(Roster).get(roster_id)
+    print(roster)
     def dummy_tactic():
         return db.session.query(Tactic).order_by(func.random()).first()
     
@@ -36,18 +36,31 @@ def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
     common_tactics = db.session.query(Tactic).filter(Tactic.factions.any(Faction.id == common_faction.id)).all()
 
 
+    # loop through factions and find the tactics that match
+    faction_tactics = []
+    for f in roster.factions:
+        faction_tactics += db.session.query(Tactic).filter(Tactic.factions.any(Faction.id == f.id)).all()
+    
+    specialist_tactics = []
+    model_id_map = {}
+    for roster_entry in roster.entries:
+        if roster_entry.specialization and roster_entry.specialization.tactic:
+            specialist_tactics.append(roster_entry.specialization.tactic)
+        model_id_map[roster_entry.figure.id] = roster_entry.figure
+    
+
     document_context_map = {
         'cheatsheet': {
             'common_tactics' : common_tactics,
-            'faction_tactics' : [dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic()],
-            'specialist_tactics' : [dummy_tactic(), dummy_tactic(),dummy_tactic(), dummy_tactic()],
-            'unique_models' : [dummy_model(),dummy_model(),dummy_model()]
+            'faction_tactics' : faction_tactics,
+            'specialist_tactics' : specialist_tactics,
+            'unique_models' : list(model_id_map.values())
         },
         'datacards': {
-            'roster' : dummy_roster,
+            'roster' : roster,
         },
         'roster': {
-            'roster' : dummy_roster
+            'roster' : roster
         }
     }
 
