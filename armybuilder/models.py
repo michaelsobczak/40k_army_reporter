@@ -161,11 +161,13 @@ class Roster(Base):
     __tablename__ = 'roster'
     id = Column(Integer, primary_key=True)
     name = Column(Text)
+    player_name = Column(Text)
 
     entries = relationship('RosterEntry', cascade='delete')
 
     def __str__(self):
         return self.name
+
 class RosterEntry(Base):
     __tablename__ = 'rosterentry'
     id = Column(Integer, primary_key=True)
