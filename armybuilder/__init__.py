@@ -31,12 +31,16 @@ class RosterView(ModelView):
     column_list = ['name', 'player_name', 'factions', 'entries', 'points']
     column_editable_list = ['name', 'player_name', 'factions', 'entries']
 
+class TacticView(ModelView):
+    column_list = ['name', 'text', 'cost', 'factions']
+    column_editable_list = ['name', 'text', 'cost', 'factions']
+
 admin.add_view(ModelView(Figure, db.session))
 admin.add_view(ModelView(Wargear, db.session))
 admin.add_view(ModelView(Keyword, db.session))
 admin.add_view(ModelView(Ability, db.session))
 admin.add_view(ModelView(Specialization, db.session))
-admin.add_view(ModelView(Tactic, db.session))
+admin.add_view(TacticView(Tactic, db.session))
 admin.add_view(RosterView(Roster, db.session))
 admin.add_view(RosterEntryView(RosterEntry, db.session))
 admin.add_view(ModelView(Faction, db.session))
