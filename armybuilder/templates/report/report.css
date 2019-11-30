@@ -1,8 +1,36 @@
-th, td {
-    border-bottom: 1px solid #ddd;
-    font-size: 4vw;
+td {
+  text-align: center;
+  background-color: beige;
+}
+  .data-card-div {
+      border-style: solid;
+      width: 50%;
+      padding: 1%;
   }
 
-  .data-card-div {
-      
+  .data-card-table {
+    width: 100%;
+  }
+
+  .table-heading {
+      background-color: #f8422a;
+  }
+
+  .tactic-cell {
+    width : 20%;
+    height: 20%;
+    background-color: gainsboro;
+    margin: 0.5%;
+    display: inline-block;
+  }
+
+  .tactic-cell-heading-div {
+    text-align: center;
+    background-color: #f8422a;
+    padding: 1%;
+  }
+
+  .tactic-cell-text-div {
+    padding: 3%;
+
   }
