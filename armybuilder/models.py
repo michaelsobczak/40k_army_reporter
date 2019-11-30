@@ -194,6 +194,10 @@ class Roster(Base):
     def __str__(self):
         return self.name
 
+    @property
+    def points(self):
+        return sum(e.points for e in self.entries)
+
 class RosterEntry(Base):
     __tablename__ = 'rosterentry'
     id = Column(Integer, primary_key=True)
@@ -232,6 +236,8 @@ class Faction(Base):
 
     keyword_id = Column(Integer, ForeignKey('keyword.id'))
     keyword = relationship('Keyword')
+
+    is_subfaction = Column(Boolean, default=False)
 
     abilities = relationship('Ability', secondary=faction_ability_table, back_populates='factions', lazy='subquery')
     figures = relationship(
