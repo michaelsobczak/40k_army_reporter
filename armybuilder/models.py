@@ -80,7 +80,7 @@ class Figure(Base):
     )
 
     def __str__(self):
-        return self.figure_type
+        return f'{self.figure_type} {self.figure_name}'
 
 class Wargear(Base):
     __tablename__ = 'wargear'
