@@ -3,7 +3,6 @@ td {
   background-color: beige;
 }
 .roster-container {
-  width: 70%;
   margin: 0 auto;
 }
 .bio-field-container {
@@ -31,6 +30,7 @@ td {
 }
 .roster-table {
   width: 100%;
+  margin-top: 5pt;
 }
 
 .data-card-div {
