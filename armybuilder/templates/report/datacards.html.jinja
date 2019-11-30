@@ -1,4 +1,6 @@
 {% extends "report/base.html.jinja" %}
 {% block content %}
-<p>datacards report</p>
+    {% for model in models %}
+        {{ macros.create_data_card(model) }}
+    {% endfor %}
 {% endblock %}

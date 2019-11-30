@@ -31,3 +31,84 @@
         {% endfor %}
     </table>
 {% endmacro %}
+
+{% macro data_card_table_heading_for_model(column_headings) %}
+    <tr>
+        <th>Name</th>
+        <th>M</th>
+        <th>Ws</th>
+        <th>Bs</th>
+        <th>S</th>
+        <th>T</th>
+        <th>W</th>
+        <th>A</th>
+        <th>Ld</th>
+        <th>Sv</th>
+    </tr>
+{% endmacro %}
+
+{% macro data_card_table_heading_for_weapons(column_headings) %}
+    <tr>
+        <th>Weapon</th>
+        <th>Range</th>
+        <th>Type</th>
+        <th>S</th>
+        <th>AP</th>
+        <th>Damage</th>
+        <th>Abilities</th>
+    </tr>
+{% endmacro %}
+
+{% macro populate_data_card_model_table(model) %}
+    <tr>
+        <td>{{model.model_type}}</td>
+        <td>{{model.move}}</td>
+        <td>{{model.weapon_skill}}</td>
+        <td>{{model.balistic_skill}}</td>
+        <td>{{model.strength}}</td>
+        <td>{{model.toughness}}</td>
+        <td>{{model.wounds}}</td>
+        <td>{{model.attacks}}</td>
+        <td>{{model.leadership}}</td>
+        <td>{{model.save}}</td>
+    </tr>
+{% endmacro %}
+
+{% macro populate_data_card_weapon_table(weapon) %}
+    <tr>
+        <td>{{weapon.name}}</td>
+        <td>{{weapon.range}}</td>
+        <td>{{weapon.type}}</td>
+        <td>{{weapon.strength}}</td>
+        <td>{{weapon.ap}}</td>
+        <td>{{weapon.damage}}</td>
+        {% for ability in weapon.abilities %}
+            <td>{{ability.name}} : {{ability.text}}</td>
+        {% endfor %}
+        
+    </tr>
+{% endmacro %}
+
+{% macro create_data_card(model) %}
+
+    <div class="data-card-div" style="width:100%;">
+        {# <p> {{model.name}} | {{ model.points }}</p> #}
+        <table class="data-card-table-top">
+            {{ data_card_table_heading_for_model( model.keys) }}
+            {{ populate_data_card_model_table(model) }}
+        </table>
+        <table class="data-card-table-bottom">
+            {{ data_card_table_heading_for_weapons(model.keys) }}
+            {% for wg in model.wargear %}
+                {{ populate_data_card_weapon_table(wg)}}
+            {% endfor %}
+        </table>
+        {% for ability in model.abilities %}
+            <p>{{ability.name}} : {{ability.text}}</p>
+        {% endfor %}
+        <p> Specialization: {{ model.specialization.name }} : {{ model.specialization.passive }}</p>
+
+    
+</table>
+    </div>
+{% endmacro %}
