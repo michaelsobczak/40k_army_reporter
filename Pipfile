@@ -9,6 +9,8 @@ pytest = "*"
 [packages]
 flask = "*"
 flask-sqlalchemy = "*"
+flask-restless = "*"
+flask-admin = "*"
 
 [requires]
 python_version = "3.8"

@@ -5,7 +5,7 @@ import os
 from typing import Type
 
 DB_DIALECT = 'sqlite'
-DB_PATH = os.path.join(os.environ['HOME'], '.armybuilder', 'db.sqlite')
+DB_PATH = os.path.join(os.path.dirname(__file__), '.db', 'db.sqlite')
 
 def get_sqlalchemy_uri() -> str:
     # triple quotes for sqlite, update this with dialect change
@@ -133,7 +133,6 @@ class Tactic(Base):
     keyword_id = Column(Integer, ForeignKey('keyword.id'))
     keyword = relationship('Keyword')
 
-
 class Roster(Base):
     __tablename__ = 'roster'
     id = Column(Integer, primary_key=True)
@@ -151,6 +150,9 @@ class RosterEntry(Base):
 
     specialization_id = Column(Integer, ForeignKey('specialization.id'))
     specialization = relationship('Specialization')
+
+    roster_id = Column(Integer, ForeignKey('roster.id'))
+    roster = relationship('Roster')
 
     wargear = relationship(
         'Wargear',
