@@ -11,6 +11,7 @@ COPY armybuilder armybuilder
 COPY setup.py setup.py
 RUN python setup.py install
 COPY run.py ./
+RUN chmod a+x ./run.py
 
 ENV FLASK_APP armybuilder
 
