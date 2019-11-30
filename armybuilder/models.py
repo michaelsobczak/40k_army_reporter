@@ -28,21 +28,6 @@ def get_sqlalchemy_uri() -> str:
 Base = declarative_base()
 
 # Create user model.
-class User(UserMixin, Base):
-    __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    username = Column(String(64), index=True, unique=True)
-    email = Column(String(120), index=True, unique=True)
-    password_hash = Column(String(128))
-
-    def __repr__(self):
-        return '<User {}>'.format(self.username)
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
 
 def make_secondary_table(a: str, b: str) -> Table:
     table_name = f'{a}_{b}_secondary'
@@ -60,6 +45,32 @@ faction_ability_table = make_secondary_table('faction', 'ability')
 figure_faction_table = make_secondary_table('figure', 'faction')
 tactic_faction_table = make_secondary_table('tactic', 'faction')
 roster_faction_table = make_secondary_table('roster', 'faction')
+user_roster_table = make_secondary_table('user', 'roster')
+class User(UserMixin, Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    username = Column(String(64), index=True, unique=True)
+    email = Column(String(120), index=True, unique=True)
+    password_hash = Column(String(128))
+
+    rosters = relationship(
+        'Roster',
+        secondary=user_roster_table,
+        back_populates='users'
+    )
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+    def __str__(self):
+        return self.username
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
 class Figure(Base):
     __tablename__ = 'figure'
     id = Column(Integer, primary_key=True)
@@ -208,6 +219,11 @@ class Roster(Base):
     factions = relationship('Faction', secondary=roster_faction_table, back_populates='rosters', lazy='subquery')
     entries = relationship('RosterEntry', cascade='delete', lazy='subquery')
 
+    users = relationship(
+        'User',
+        secondary=user_roster_table,
+        back_populates='rosters'
+    )
     def __str__(self):
         return self.name
 

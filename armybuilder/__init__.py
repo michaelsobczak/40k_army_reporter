@@ -33,8 +33,8 @@ class RosterEntryView(ModelView):
     column_editable_list = ['name', 'figure', 'specialization', 'roster', 'wargear']
 
 class RosterView(ModelView):
-    column_list = ['name', 'player_name', 'factions', 'entries', 'points']
-    column_editable_list = ['name', 'player_name', 'factions', 'entries']
+    column_list = ['name', 'player_name', 'factions', 'entries', 'users', 'points']
+    column_editable_list = ['name', 'player_name', 'factions', 'entries', 'users']
 
 class TacticView(ModelView):
     column_list = ['name', 'text', 'cost', 'factions']
