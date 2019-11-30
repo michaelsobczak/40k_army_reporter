@@ -44,6 +44,7 @@ class Figure(Base):
     __tablename__ = 'figure'
     id = Column(Integer, primary_key=True)
     figure_type = Column(Text)
+    figure_name = Column(Text)
     points = Column(Integer)
     move = Column(Text)
     weapon_skill = Column(Integer)
@@ -54,6 +55,7 @@ class Figure(Base):
     attacks = Column(Text)
     leadership = Column(Text)
     save = Column(Text)
+    max_number = Column(Integer)
 
     keywords = relationship(
         'Keyword',
@@ -73,11 +75,13 @@ class Wargear(Base):
     __tablename__ = 'wargear'
     id = Column(Integer, primary_key=True)
     name = Column(Text)
+    profile = Column(Text)
     wargear_range = Column(Text)
     wargear_type = Column(Text)
     strength = Column(Text)
     ap = Column(Text)
     damage = Column(Text)
+    points = Column(Integer)
 
     abilities = relationship(
         'Ability',
