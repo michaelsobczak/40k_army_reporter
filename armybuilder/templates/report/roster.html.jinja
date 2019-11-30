@@ -57,7 +57,8 @@
     {% for roster_entry in roster.entries %}
         {{ macros.roster_row(roster_entry) }}
     {% endfor %}
-
+    <tr>
+        <td colspan="5">Total</td><td>{{ roster.points }}</td>
 </table>
 </div>
 {% endblock %}

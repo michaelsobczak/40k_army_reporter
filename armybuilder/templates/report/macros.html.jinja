@@ -5,7 +5,7 @@
         {% endfor %} #}
         <td>{{ roster_entry.id }}</td>
         <td>{{ roster_entry.name }}</td>
-        <td> {{ roster_entry.figure.name }}  {{ roster_entry.figure.figure_type }}</td>
+        <td> {{ roster_entry.figure.figure_name }} {{ roster_entry.figure.figure_type }}</td>
         <td>
             {% for w in roster_entry.wargear %}
             {{ w.name }}
