@@ -27,7 +27,6 @@ def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
 
     common_keyword = db.session.query(Keyword).filter_by(label='Common').first()
     if not common_keyword:
-        print(f'No Common Keyword found, exiting')
         return
     common_faction = db.session.query(Faction).filter_by(keyword_id=common_keyword.id).first()
     if not common_faction:

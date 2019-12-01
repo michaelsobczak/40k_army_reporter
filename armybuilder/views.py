@@ -23,12 +23,13 @@ def roster_view(roster_id):
 @app.route('/report/<int:roster_id>/<string:report_name>')
 def report_view(roster_id, report_name):
     if 'report_view_memo' not in g:
+        print("first yikes")
         g.report_view_memo = {}
 
     if roster_id not in g.report_view_memo or report_name not in g.report_view_memo[roster_id]:
         with tempfile.TemporaryDirectory() as tmpdir:
+            print("second yikes")
             g.report_view_memo[roster_id] = generate_report(tmpdir, roster_id)
-
     return g.report_view_memo[roster_id][report_name]
 
 

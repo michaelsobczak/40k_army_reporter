@@ -71,29 +71,29 @@
 {% macro populate_data_card_model_table(model) %}
     <tr>
         <td>{{model.figure_type}}</td>
-        <td>{{model.move}}</td>
-        <td>{{model.weapon_skill}}</td>
-        <td>{{model.ballistic_skill}}</td>
+        <td>{{model.move}}"</td>
+        <td>+{{model.weapon_skill}}</td>
+        <td>+{{model.ballistic_skill}}</td>
         <td>{{model.strength}}</td>
         <td>{{model.toughness}}</td>
         <td>{{model.wounds}}</td>
         <td>{{model.attacks}}</td>
-        <td>{{model.leadership}}</td>
-        <td>{{model.save}}</td>
+        <td>+{{model.leadership}}</td>
+        <td>+{{model.save}}</td>
     </tr>
 {% endmacro %}
 
 {% macro populate_data_card_weapon_table(weapon) %}
     <tr >
         <td>{{weapon.name}}</td>
-        <td>{{weapon.range}}</td>
-        <td>{{weapon.type}}</td>
+        <td>{{weapon.wargear_range}}</td>
+        <td>{{weapon.wargear_type}}</td>
         <td>{{weapon.strength}}</td>
         <td>{{weapon.ap}}</td>
         <td>{{weapon.damage}}</td>
         <td>
         {% for ability in weapon.abilities %}
-            {{ability.name}}
+            {{ability.text}}
         {% endfor %}
         </td>
         
@@ -105,17 +105,19 @@
     <div class="data-card-div">
         <p> {{ roster_entry.id }} : {{roster_entry.name}} </p>
         <p class="points-text"> {{ roster_entry.points }} Points </p>
-        <table class="data-card-table">
-            {{ data_card_table_heading_for_model() }}
-            {# {{roster_entry.figure }} #}
-            {{ populate_data_card_model_table(roster_entry.figure) }}
-        </table>
-        <table class="data-card-table">
-            {{ data_card_table_heading_for_weapons(roster_entry.keys) }}
-            {% for wg in roster_entry.wargear %}
-                {{ populate_data_card_weapon_table(wg)}}
-            {% endfor %}
-        </table>
+        <div class="data-card-table-container">
+            <table class="data-card-table">
+                {{ data_card_table_heading_for_model() }}
+                {# {{roster_entry.figure }} #}
+                {{ populate_data_card_model_table(roster_entry.figure) }}
+            </table>
+            <table class="data-card-table">
+                {{ data_card_table_heading_for_weapons(roster_entry.keys) }}
+                {% for wg in roster_entry.wargear %}
+                    {{ populate_data_card_weapon_table(wg)}}
+                {% endfor %}
+            </table>
+        </div>
         <div class="data-card-abilities">
             {% for ability in roster_entry.figure.abilities %}
                 <p><b>{{ability.name}}</b>: {{ability.text}}</p>

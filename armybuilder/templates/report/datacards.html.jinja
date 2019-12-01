@@ -1,6 +1,8 @@
 {% extends "report/base.html.jinja" %}
 {% block content %}
-    {% for roster_entry in roster.entries %}
-        {{ macros.create_data_card(roster_entry) }}
-    {% endfor %}
+    <div class="data-card-container">
+        {% for roster_entry in roster.entries %}
+            {{ macros.create_data_card(roster_entry) }}
+        {% endfor %}
+    </div>
 {% endblock %}
