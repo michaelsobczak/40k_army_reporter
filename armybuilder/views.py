@@ -20,7 +20,12 @@ def rosters_view():
 @app.route('/roster/<int:roster_id>')
 def roster_view(roster_id):
     roster = db.session.query(Roster).get(roster_id)
-    return render_template('web/roster.html.jinja')
+    return render_template('web/roster.html.jinja', roster=roster)
+
+
+@app.route('/user/<int:user_id>')
+def user_view(user_id):
+    return render_template('web/user.html.jinja')
 
 
 @app.route('/report/<int:roster_id>')
