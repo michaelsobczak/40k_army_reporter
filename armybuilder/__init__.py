@@ -37,8 +37,11 @@ class RosterView(ModelView):
     column_editable_list = ['name', 'player_name', 'factions', 'entries', 'users']
 
 class TacticView(ModelView):
+    column_searchable_list = (Tactic.name, Tactic.text, Tactic.cost)
+    column_filters = ['name','text', 'cost']
     column_list = ['name', 'text', 'cost', 'factions']
     column_editable_list = ['name', 'text', 'cost', 'factions']
+
 
 class UserView(ModelView):
     column_list = ['username', 'email', 'roles', 'rosters']
