@@ -12,11 +12,19 @@ from flask_login import logout_user
 
 @app.route('/')
 @app.route('/index')
-def army_input_view():
-    return render_template('web/army_input.html.jinja')
+@app.route('/rosters')
+def rosters_view():
+    rosters = db.session.query(Roster).all()
+    return render_template('web/rosters.html.jinja', rosters=rosters)
+
+@app.route('/roster/<int:roster_id>')
+def roster_view(roster_id):
+    roster = db.session.query(Roster).get(roster_id)
+    return render_template('web/roster.html.jinja')
+
 
 @app.route('/report/<int:roster_id>')
-def roster_view(roster_id):
+def report_roster_view(roster_id):
     roster = db.session.query(Roster).get(roster_id)
     return render_template('web/roster_view.html.jinja', roster=roster)
 
