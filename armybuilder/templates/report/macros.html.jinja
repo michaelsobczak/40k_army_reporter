@@ -9,6 +9,10 @@
         <td>
             {% for w in roster_entry.wargear %}
             {{ w.name }}
+            
+            {% if not loop.last %}
+                ,
+            {% endif %}
             {% endfor %}
         </td>
         {% if roster_entry.specialization %}
@@ -91,7 +95,7 @@
         <td>{{weapon.strength}}</td>
         <td>{{weapon.ap}}</td>
         <td>{{weapon.damage}}</td>
-        <td>
+        <td class="data-card-weapon-ability-field">
         {% for ability in weapon.abilities %}
             {{ability.text}}
         {% endfor %}

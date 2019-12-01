@@ -21,7 +21,9 @@ th {
   text-align: right;
   vertical-align: center;
   font-weight: bold;
-  font-size: 2vw;
+  font-size: 1em;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .bio-entry {
@@ -30,7 +32,7 @@ th {
   /* height: 40px; */
   background-color: gainsboro;
   vertical-align: center;
-  font-size: 2vw;
+  font-size: 1em;
 }
 .roster-table {
   width: 100%;
@@ -60,8 +62,13 @@ th {
 }
 
 .data-card-table-container {
-  font-size: 1vw;
+  font-size: 1vh;
 }
+
+.data-card-weapon-ability-field {
+  font-size: 1vh;
+}
+
 .points-text {
   position: absolute;
   top: 0px;
