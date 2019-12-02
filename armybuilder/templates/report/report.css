@@ -1,3 +1,7 @@
+@media print
+{
+    .tactics-container { page-break-inside:avoid; }
+}
 td {
   text-align: center;
   background-color: beige;
@@ -102,4 +106,8 @@ h2.tactic_label {
 .tactic-cell-text-div {
   padding: 3%;
 
+}
+
+.tactic-cost-div {
+  float: right;
 }
