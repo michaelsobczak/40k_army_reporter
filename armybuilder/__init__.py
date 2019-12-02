@@ -66,5 +66,7 @@ admin.add_view(ArmybuilderModelView(Role, db.session, category='User'))
 manager = flask_restless.APIManager(app, session=db.session)
 manager.create_api(Roster, methods=['GET', 'POST', 'PUT', 'DELETE'])
 manager.create_api(RosterEntry, allow_delete_many=True, methods=['GET', 'POST', 'PUT', 'DELETE'])
-
+manager.create_api(Specialization, results_per_page=-1, methods=['GET', 'POST', 'PUT', 'DELETE'])
+manager.create_api(Wargear,results_per_page=-1,  methods=['GET', 'POST', 'PUT', 'DELETE'])
+manager.create_api(Figure, results_per_page=-1, methods=['GET', 'POST', 'PUT', 'DELETE'])
 from . import views, report
