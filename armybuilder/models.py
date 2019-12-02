@@ -241,6 +241,9 @@ class Tactic(Base):
         secondary=tactic_faction_table,
         back_populates='tactics')
 
+
+    specialization = relationship('Specialization')
+
     def __str__(self):
         return self.name
 class Roster(Base):
