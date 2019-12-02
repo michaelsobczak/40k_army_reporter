@@ -55,7 +55,7 @@
 <table class="roster-table">
     {{ macros.roster_table_heading() }}
     {% for roster_entry in roster.entries %}
-        {{ macros.roster_row(roster_entry) }}
+        {{ macros.roster_row(roster_entry, roster.entries.index(roster_entry)) }}
     {% endfor %}
     <tr>
         <td colspan="5">Total</td><td>{{ roster.points }}</td>

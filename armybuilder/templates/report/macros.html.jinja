@@ -1,9 +1,9 @@
-{% macro roster_row(roster_entry) %}
+{% macro roster_row(roster_entry,index) %}
     <tr>
         {# {% for key,value in roster_entry.items() %}
             <td>{{value}}</td>
         {% endfor %} #}
-        <td>{{ roster_entry.id }}</td>
+        <td>{{ index }}</td>
         <td>{{ roster_entry.name }}</td>
         <td> {{ roster_entry.figure.figure_name }} {{ roster_entry.figure.figure_type }}</td>
         <td>
