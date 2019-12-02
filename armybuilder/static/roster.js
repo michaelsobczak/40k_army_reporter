@@ -1,14 +1,94 @@
 
+var MultiselectField = function(config) {
+    jsGrid.Field.call(this, config);
+};
+
+MultiselectField.prototype = new jsGrid.Field({
+    
+    items: [],
+    textField: "",
+    
+    itemTemplate: function(value) {
+        return $.makeArray(value).join(", ");
+    },
+    
+    _createSelect: function(selected) {
+        var textField = this.textField;
+        var $result = $("<select>").attr("multiple", "multiple");
+        
+        $.each(this.items, function(_, item) {
+            var value = item[textField];
+            var $opt = $("<option>").text(value);
+            
+            if($.inArray(value, selected) > -1) {
+                $opt.attr("selected", "selected");
+            }
+            
+            $result.append($opt);
+        });
+        
+        return $result;
+    },
+    
+    insertTemplate: function() {
+        var insertControl = this._insertControl = this._createSelect();
+        
+        setTimeout(function() {
+            insertControl.multiSelect({
+                minWidth: 140
+            }); 
+        });
+        
+        return insertControl;
+    },
+    
+    editTemplate: function(value) {
+        var editControl = this._editControl = this._createSelect(value);
+        
+        setTimeout(function() {
+            editControl.multiSelect({
+                minWidth: 140
+            });
+        });
+        
+        return editControl;
+    },
+    
+    insertValue: function() {
+        return this._insertControl.find("option:selected").map(function() {    
+            return this.selected ? $(this).text() : null;
+        });
+    },
+    
+    editValue: function() {
+        return this._editControl.find("option:selected").map(function() {    
+            return this.selected ? $(this).text() : null;
+        });
+    }
+    
+});
+
+jsGrid.fields.multiselect = MultiselectField;
 
 
 
 function update_data(item) {
     var d = $.Deferred();
+    console.log(item);
+    var clean_item = {};
+    clean_item['specialization_id'] = item.specialization_id;
+    clean_item['figure_id'] = item.figure_id;
+    clean_item['wargear'] = [];
+    for (var i = 0; i < item['wargear'].length; i++) {
+        var wg = item.wargear[i];
+        clean_item['wargear'].push(wg);
+    }
+    clean_item['name'] = item.name;
     $.ajax({
         type: "PUT",
         url: "/api/rosterentry/" + item.id,
         contentType: "application/json",
-        data: JSON.stringify(item),
+        data: JSON.stringify(clean_item),
     }).done(function(response) {
         d.resolve(response);
     });
@@ -24,6 +104,8 @@ function delete_data(item) {
 
 function insert_data(item) {
     var d = $.Deferred();
+    console.log(item);
+    delete item.wargear.prevObject;
     $.ajax({
         type: "POST",
         url: "/api/rosterentry",
@@ -38,109 +120,142 @@ function insert_data(item) {
 
 
 function initialize_roster_entry_grid(entry_grid_id, roster_id) {
+    $.get('/api/wargear', null, function(data, stuff, stuff) {
+        var wargear = data['objects'];
+        var wargear_id_map = {};
+        for (var w = 0; w <wargear.length; w++) {
+            var wg = wargear[w];
+            wargear_id_map[wg.name] = wg;
+        }
+        console.log(wargear_id_map);
+        var gs = "#" + entry_grid_id;
+        function load_data(filter) {
+            var pageIndex = $(gs).data('JSGrid').pageIndex;
+            var pageSize = $(gs).data('JSGrid').pageSize;
+            var d = $.Deferred();
+            $.ajax({
+                url: "/api/roster/" + roster_id + "/entries?page=" + pageIndex + "&page_size=" + pageSize,
+                dataType: "json"
+            }).done(function(response) {
+                console.log(response);
+                var data = response['objects'];
+                // for (var i = 0; i < data.length; i++) {
+                //     data[i]['verb'] = VERBS.indexOf(data[i]['verb'])
+                // }
+                d.resolve(data);
+            });
+        
+            return d.promise();
+        }
 
-    var gs = "#" + entry_grid_id;
-    function load_data(filter) {
-        var pageIndex = $(gs).data('JSGrid').pageIndex;
-        var pageSize = $(gs).data('JSGrid').pageSize;
-        var d = $.Deferred();
-        $.ajax({
-            url: "/api/roster/" + roster_id + "/entries?page=" + pageIndex + "&page_size=" + pageSize,
-            dataType: "json"
-        }).done(function(response) {
-            console.log(response);
-            var data = response['objects'];
-            // for (var i = 0; i < data.length; i++) {
-            //     data[i]['verb'] = VERBS.indexOf(data[i]['verb'])
-            // }
-            d.resolve(data);
-        });
-    
-        return d.promise();
-    }
+        $(gs).jsGrid({
+            width: "100%",
+            sorting: false,
+            paging: true,
+            autoload: true,
+            inserting: true,
+            editing: true,
+            controller: {
+                loadData: load_data,
+                updateItem: update_data,
+                deleteItem: delete_data,
+                insertItem: insert_data
+            },
+            fields: [
+                { name: "id", visible: false},
+                { name: "name", type: "text"},
+                { name: "figure_id", type: "select", width: 200, itemTemplate: function(value, item) {
+                    return $('<div>')
+                                .addClass('figure-field')
+                                .attr('id', 'roster-entry-' + item['id'] + '-figure-field')
+                                .text(item['figure']['figure_type'] + ' ' + item['figure']['figure_name']);
+                }, editTemplate: function(value, item) {
+                    
+                    var sel_id = 'roster-entry-' + item['id'] + '-figure-select';
+                    var sel = $('<select>')
+                                    .addClass('figure-select-field')
+                                    .attr('id', sel_id);
+                    $.get('/api/figure', null, function(data, textStatus, jqXHR ) {
+                        $(data['objects']).each(function() {                        if (value) 
+                            sel.append($("<option>").attr('value',this.id).text(this.figure_type + ' ' + this.figure_name));
+                            if (value) {
+                                sel.val(value);
+                            }
+                        });
+                    });
 
-    $(gs).jsGrid({
-        width: "100%",
-        sorting: false,
-        paging: true,
-        autoload: true,
-        inserting: true,
-        editing: true,
-        controller: {
-            loadData: load_data,
-            updateItem: update_data,
-            deleteItem: delete_data,
-            insertItem: insert_data
-        },
-        fields: [
-            { name: "id", visible: false},
-            { name: "name", type: "text"},
-            { name: "figure_id", type: "select", itemTemplate: function(value, item) {
-                return $('<div>')
-                            .addClass('figure-field')
-                            .attr('id', 'roster-entry-' + item['id'] + '-figure-field')
-                            .text(item['figure']['figure_type'] + ' ' + item['figure']['figure_name']);
-            }, editTemplate: function(value, item) {
-                
-                var sel_id = 'roster-entry-' + item['id'] + '-figure-select';
-                var sel = $('<select>')
-                                .addClass('figure-select-field')
-                                .attr('id', sel_id);
-                $.get('/api/figure', null, function(data, textStatus, jqXHR ) {
-                    $(data['objects']).each(function() {                        if (value) 
-                        sel.append($("<option>").attr('value',this.id).text(this.figure_type + ' ' + this.figure_name));
+                    this.editControl = sel;
+                    return sel;
+                }},
+                { name: "specialization_id", type: "select", itemTemplate: function(value, item) {
+                    var spec = '';
+                    if (value) {
+                        spec = item['specialization']['name'];
+                    }
+                    return $('<div>')
+                                .addClass('specialization-field')
+                                .attr('id', 'roster-entry-' + item['id'] + '-specialization-field')
+                                .text(spec);
+                }, editTemplate: function(value, item) {
+                    
+                    var sel_id = 'roster-entry-' + item['id'] + '-specialization-select';
+                    var sel = $('<select>')
+                                    .addClass('specialization-select-field')
+                                    .attr('id', sel_id);
+                    $.get('/api/specialization', null, function(data, textStatus, jqXHR ) {
+                        console.log(data);
+                        console.log(sel_id);
+                        $(data['objects']).each(function() {
+                            sel.append($("<option>").attr('value',this.id).text(this.name));
+                        });
                         if (value) {
                             sel.val(value);
                         }
                     });
-                });
+                    this.editControl = sel;
 
-                this.editControl = sel;
-                return sel;
-            }},
-            { name: "specialization_id", type: "select", itemTemplate: function(value, item) {
-                var spec = '';
-                if (value) {
-                    spec = item['specialization']['name'];
-                }
-                return $('<div>')
-                            .addClass('specialization-field')
-                            .attr('id', 'roster-entry-' + item['id'] + '-specialization-field')
-                            .text(spec);
-            }, editTemplate: function(value, item) {
-                
-                var sel_id = 'roster-entry-' + item['id'] + '-specialization-select';
-                var sel = $('<select>')
-                                .addClass('specialization-select-field')
-                                .attr('id', sel_id);
-                $.get('/api/specialization', null, function(data, textStatus, jqXHR ) {
-                    console.log(data);
-                    console.log(sel_id);
-                    $(data['objects']).each(function() {
-                        sel.append($("<option>").attr('value',this.id).text(this.name));
+                    return sel;
+    
+                }},
+                // { name: "wargear", itemTemplate: function(value, item) {
+                //     var wargear_str = ''
+                //     if (value) {
+                //         for (var i = 0; i < value.length; i++) {
+                //             wargear_str += value[i]['name'] + '\n';
+                //         }
+                //     }
+                //     return $('<div>')
+                //                 .addClass('wargear-field')
+                //                 .attr('id', 'roster-entry-' + item['id'] + '-wargear-field')
+                //                 .text(wargear_str);
+                // }},
+                { name: "wargear", type: "multiselect", width: 250, align: "center", items: wargear, textField: "name", valueField: "id",
+                editValue: function() {
+                    console.log('edit control')
+                    console.log(this._editControl);
+                    var values = this._editControl.find("option:selected").map(function() {    
+                        var selected_val = this.selected ? $(this).val() : null;
+                        var selected = wargear_id_map[selected_val];
+                        delete selected.roster_entries;
+                        delete selected.prevObject;
+                        return selected;
                     });
-                    if (value) {
-                        sel.val(value);
-                    }
-                });
-                this.editControl = sel;
-
-                return sel;
-  
-            }},
-            { name: "wargear", itemTemplate: function(value, item) {
-                var wargear_str = ''
-                if (value) {
+                    console.log('values')
+                    console.log(values);
+                    return values;
+                }, itemTemplate: function(value, item) {
+                    console.log('multi select item');
+                    console.log(value);
+                    console.log(item);
+                    var s = '';
                     for (var i = 0; i < value.length; i++) {
-                        wargear_str += value[i]['name'] + '\n';
+                        s += value[i].name + ' ' + (value[i].profile ? value[i].profile : '') + '<br />';
                     }
-                }
-                return $('<div>')
-                            .addClass('wargear-field')
-                            .attr('id', 'roster-entry-' + item['id'] + '-wargear-field')
-                            .text(wargear_str);
-            }},
-            { name: "control", type: "control" }
-        ]
+                    return '<div>' + s + '</div>';
+                } },
+                { name: "control", type: "control" }
+            ]
+        });
     });
+    
 }

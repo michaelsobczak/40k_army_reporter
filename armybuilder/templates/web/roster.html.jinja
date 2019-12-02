@@ -21,10 +21,12 @@
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='thirdparty/jsgrid/jsgrid.min.js') }}"></script>
-<script src="{{ url_for('static', filename='roster.js') }}"></script>
+
 <link rel="stylesheet" href="{{ url_for('static', filename='thirdparty/jsgrid/jsgrid.min.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='thirdparty/jsgrid/jsgrid-theme.min.css') }}">
-
+<script src="{{ url_for('static', filename='thirdparty/multiselect/jquery.multi-select.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='thirdparty/multiselect/multi-select.css') }}">
+<script src="{{ url_for('static', filename='roster.js') }}"></script>
 <script>
     $(function() {
         initialize_roster_entry_grid("roster-entry-grid", {{ roster.id}});
