@@ -1,9 +1,9 @@
-{% macro roster_row(roster_entry) %}
+{% macro roster_row(roster_entry,index) %}
     <tr>
         {# {% for key,value in roster_entry.items() %}
             <td>{{value}}</td>
         {% endfor %} #}
-        <td>{{ roster_entry.id }}</td>
+        <td>{{ index }}</td>
         <td>{{ roster_entry.name }}</td>
         <td> {{ roster_entry.figure.figure_name }} {{ roster_entry.figure.figure_type }}</td>
         <td>
@@ -130,7 +130,7 @@
         {% if roster_entry.specialization %}
         <p><b>Specialization {{ roster_entry.specialization.name }}</b></p><p>{{ roster_entry.specialization.passive }}</p>
         {% else %}
-        <p> Specialization:</p>
+        
         {% endif %}
     </div>
 {% endmacro %}
@@ -139,7 +139,10 @@
 
    <div class="tactic-cell">
         <div class="tactic-cell-heading-div">
-            {{ tactic.name }}
+            {{ tactic.name }} 
+            <div class="tactic-cost-div">
+                {{tactic.cost}}CP
+            </div>
         </div>
         <div class="tactic-cell-text-div">
             {{ tactic.text }}
