@@ -70,7 +70,31 @@ MultiselectField.prototype = new jsGrid.Field({
 
 jsGrid.fields.multiselect = MultiselectField;
 
+function shallow_copy_data(mainObj) {
+    let objCopy = {}; // objCopy will store a copy of the mainObj
+    let key;
+  
+    for (key in mainObj) {
+        if (mainObj.hasOwnProperty(key)) {
+            objCopy[key] = mainObj[key]; // copies each property to the objCopy object
+        }
+    }
+    return objCopy;
+  }
 
+function cloneRosterEntry(item, callback) {
+    var clone = shallow_copy_data(item);
+    delete clone.id;
+    $.ajax({
+        type: "POST",
+        url: "/api/rosterentry",
+        contentType: "application/json",
+        data: JSON.stringify(clone),
+    }).done(function(response) {
+        console.log("got em");
+        callback(response);
+    });
+}
 
 function update_data(item) {
     var d = $.Deferred();
@@ -134,7 +158,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
             var pageSize = $(gs).data('JSGrid').pageSize;
             var d = $.Deferred();
             $.ajax({
-                url: "/api/roster/" + roster_id + "/entries?page=" + pageIndex + "&page_size=" + pageSize,
+                url: "/api/roster/" + roster_id + "/entries?page=" + pageIndex + "&results_per_page=" + pageSize,
                 dataType: "json"
             }).done(function(response) {
                 console.log(response);
@@ -154,6 +178,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
             paging: true,
             autoload: true,
             inserting: true,
+            pageSize: 20,
             editing: true,
             controller: {
                 loadData: load_data,
@@ -279,7 +304,20 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
     
                 } },
                 { name: "points" },
-                { name: "control", type: "control" }
+                { name: "control", width: 100, type: "control", itemTemplate: function(value, item) {
+                    var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
+
+                    var $customButton = $("<button>")
+                                            .addClass('btn-info')
+                                            .attr('type', 'button')
+                                            .text('CLONE')
+                                            .click(function(e) {
+                                                cloneRosterEntry(item, (r) => {$(gs).jsGrid('render');});
+                                                e.stopPropagation();
+                                            });
+
+                    return $result.add($customButton);
+                }, }
             ]
         });
     });

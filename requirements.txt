@@ -14,7 +14,6 @@ Flask-WTF==0.14.2
 itsdangerous==1.1.0
 Jinja2==2.10.3
 jmespath==0.9.4
--e git+git@github.com:servitor-io/40k_army_reporter.git@f53f6ea8708f55a641e9b8e914865b9157f7b178#egg=killteam_armybuilder
 Mako==1.1.0
 MarkupSafe==1.1.1
 mimerender==0.6.0
