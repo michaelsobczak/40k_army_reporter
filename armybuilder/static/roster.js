@@ -125,7 +125,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
         var wargear_id_map = {};
         for (var w = 0; w <wargear.length; w++) {
             var wg = wargear[w];
-            wargear_id_map[wg.name] = wg;
+            wargear_id_map[wg.id] = wg;
         }
         console.log(wargear_id_map);
         var gs = "#" + entry_grid_id;
@@ -173,15 +173,16 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                     
                     var sel_id = 'roster-entry-' + item['id'] + '-figure-select';
                     var sel = $('<select>')
-                                    .addClass('figure-select-field')
+                                    .addClass('figure-select-field chosen-select')
                                     .attr('id', sel_id);
                     $.get('/api/figure', null, function(data, textStatus, jqXHR ) {
-                        $(data['objects']).each(function() {                        if (value) 
+                        $(data['objects']).each(function() {
                             sel.append($("<option>").attr('value',this.id).text(this.figure_type + ' ' + this.figure_name));
-                            if (value) {
-                                sel.val(value);
-                            }
                         });
+                        if (value) {
+                            sel.val(value);
+                        }
+                        sel.chosen();
                     });
 
                     this.editControl = sel;
@@ -193,14 +194,14 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                         spec = item['specialization']['name'];
                     }
                     return $('<div>')
-                                .addClass('specialization-field')
+                                .addClass('specialization-field chosen-select')
                                 .attr('id', 'roster-entry-' + item['id'] + '-specialization-field')
                                 .text(spec);
                 }, editTemplate: function(value, item) {
                     
                     var sel_id = 'roster-entry-' + item['id'] + '-specialization-select';
                     var sel = $('<select>')
-                                    .addClass('specialization-select-field')
+                                    .addClass('specialization-select-field chosen-select')
                                     .attr('id', sel_id);
                     $.get('/api/specialization', null, function(data, textStatus, jqXHR ) {
                         console.log(data);
@@ -211,6 +212,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                         if (value) {
                             sel.val(value);
                         }
+                        sel.chosen();
                     });
                     this.editControl = sel;
 
@@ -229,11 +231,10 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                 //                 .attr('id', 'roster-entry-' + item['id'] + '-wargear-field')
                 //                 .text(wargear_str);
                 // }},
-                { name: "wargear", type: "multiselect", width: 250, align: "center", items: wargear, textField: "name", valueField: "id",
+                { name: "wargear", type: "select", width: 250, align: "center", items: wargear, textField: "name", valueField: "id",
                 editValue: function() {
-                    console.log('edit control')
-                    console.log(this._editControl);
-                    var values = this._editControl.find("option:selected").map(function() {    
+                    
+                    var values = this.editControl.find("option:selected").map(function() {    
                         var selected_val = this.selected ? $(this).val() : null;
                         var selected = wargear_id_map[selected_val];
                         delete selected.roster_entries;
@@ -244,15 +245,40 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                     console.log(values);
                     return values;
                 }, itemTemplate: function(value, item) {
-                    console.log('multi select item');
-                    console.log(value);
-                    console.log(item);
                     var s = '';
                     for (var i = 0; i < value.length; i++) {
                         s += value[i].name + ' ' + (value[i].profile ? value[i].profile : '') + '<br />';
                     }
                     return '<div>' + s + '</div>';
+                }, editTemplate: function(value, item) {
+                    console.log('inside edit template');
+                    console.log(value);
+                    console.log(item);
+                    var sel_id = 'roster-entry-' + item['id'] + '-wargear-select';
+                    var sel = $('<select>')
+                                    .addClass('specialization-select-field form-control')
+                                    .prop('multiple', 'true')
+                                    .attr('id', sel_id);
+                    
+                    $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
+                        
+                        $(data['objects']).each(function() {
+                            sel.append($("<option>").attr('value',this.id).text(this.name));
+                            
+                        });
+                        var sel_vals = [];
+                        for (var i = 0; i < value.length; i++) {
+                            sel_vals.push(value[i].id);
+                        }
+                        sel.val(sel_vals);
+                        sel.chosen();
+                    });
+                    this.editControl = sel;
+
+                    return sel;
+    
                 } },
+                { name: "points" },
                 { name: "control", type: "control" }
             ]
         });
