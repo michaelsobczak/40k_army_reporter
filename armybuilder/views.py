@@ -1,5 +1,5 @@
 from . import app, db
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, abort
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from .models import Roster, User, Wargear
@@ -20,8 +20,7 @@ def rosters_view():
 @app.route('/roster/<int:roster_id>')
 def roster_view(roster_id):
     roster = db.session.query(Roster).get(roster_id)
-    wargear = db.session.query(Wargear).all()
-    return render_template('web/roster.html.jinja', roster=roster, wargear=wargear)
+    return render_template('web/roster.html.jinja', roster=roster)
 
 
 @app.route('/user/<int:user_id>')
