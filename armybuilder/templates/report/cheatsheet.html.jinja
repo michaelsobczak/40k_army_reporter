@@ -1,25 +1,24 @@
 {% extends "report/base.html.jinja" %}
 {% block content %}
-<p>Cheatsheet report</p>
 <div class="tactics-container common">
-    <h2 class="tactic_label"> {{ "Common Tactics" }}</h2>
+    <h2 class="tactic-label"> {{ "Common Tactics" }}</h2>
     {% for c_tac in common_tactics %}
         {{ macros.render_tactic(c_tac) }}
     {% endfor %}
 </div>
 <div class="tactics-container faction">
-     <h2 class="tactic_label"> {{ "Faction Tactics" }}</h2>
+     <h2 class="tactic-label"> {{ "Faction Tactics" }}</h2>
     {% for f_tac in faction_tactics %}
         {{ macros.render_tactic(f_tac) }}
     {% endfor %}
 </div>
 <div class="tactics-container specialist">
-     <h2 class="tactic_label"> {{ "Specialist Tactics" }}</h2>
+     <h2 class="tactic-label"> {{ "Specialist Tactics" }}</h2>
     {% for s_tac in specialist_tactics %}
         {{ macros.render_tactic(s_tac) }}
     {% endfor %}
 </div>
-    {# <h2 class="tactic_label"> {{ "Units" }}</h2>
+    {# <h2 class="tactic-label"> {{ "Units" }}</h2>
     {% for model in unique_models %}
         {{ macros.create_data_card(model) }}
     {% endfor %} #}

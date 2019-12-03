@@ -1,7 +1,7 @@
-@media print
-{
-    .tactics-container { page-break-inside:avoid; }
-}
+@media print { .tactics-container { page-break-inside:avoid; } .tactic-cell { page-break-inside: avoid; } }
+
+@page { size: auto;  margin: 0mm; }
+
 td {
   text-align: center;
   background-color: beige;
@@ -89,25 +89,54 @@ h2.tactic_label {
   width: 100%;
 }
 .tactic-cell {
-  width : 20%;
-  height: 30%;
   background-color: gainsboro;
   margin: 0.5%;
   display: inline-block;
   float: left;
+  break-after: avoid-page;
+  border-style: solid;
 }
 
+
+.tactics-container {
+  display: inline-block;
+  width: 33%;
+  float: left;
+}
 .tactic-cell-heading-div {
   text-align: center;
   background-color: #f8422a;
   padding: 1%;
+  font-weight: bold;
+  border-bottom: #5a180f 1px solid;
+  font-size: 1.17vw;
 }
 
 .tactic-cell-text-div {
   padding: 3%;
+  font-size: 1vw;
 
 }
 
 .tactic-cost-div {
-  float: right;
+  color: black;
+  background-color: cornsilk;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.17vw;
+  padding: 1%;
+}
+
+.tactic-cell-bottom-div {
+  background-color: gray;
+}
+
+.stroke-me
+{
+    color: corncrimflowerblue;
+    text-shadow:
+    -1px -1px 0 rgb(58, 57, 57),
+    1px -1px 0 rgb(58, 57, 57),
+    -1px 1px 0 rgb(58, 57, 57),
+    1px 1px 0 rgb(58, 57, 57);  
 }

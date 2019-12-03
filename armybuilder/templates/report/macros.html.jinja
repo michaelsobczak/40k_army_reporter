@@ -140,12 +140,20 @@
    <div class="tactic-cell">
         <div class="tactic-cell-heading-div">
             {{ tactic.name }} 
-            <div class="tactic-cost-div">
-                {{tactic.cost}}CP
-            </div>
+            
         </div>
         <div class="tactic-cell-text-div">
             {{ tactic.text }}
+        </div>
+        <div class="tactic-cell-bottom-div">
+           <div class="tactic-cost-div">
+                {{tactic.cost}} 
+                {% if tactic.cost > 1 %}
+                    Command Points
+                {% else %}
+                    Command Point
+                {% endif %}
+            </div>
         </div>
    </div>
 {% endmacro %}
