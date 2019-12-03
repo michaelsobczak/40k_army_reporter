@@ -6,6 +6,7 @@
             <h1 class="display-4 font-italic">{{ roster.name }}</h1>
             <p class="lead my-3">{{ roster.users[0].name }}</p>
             <p>Factions: {{ roster.factions|join(", ") }}</p>
+            <p>Points: {{ roster.points }}</p>
             <p>Reports</p>
             <ul class="list-group">
                 <li class="list-group-item"><a href="/report/{{ roster.id }}/roster">Roster</a></li>
@@ -21,13 +22,15 @@
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='thirdparty/jsgrid/jsgrid.min.js') }}"></script>
-<script src="{{ url_for('static', filename='roster.js') }}"></script>
+
 <link rel="stylesheet" href="{{ url_for('static', filename='thirdparty/jsgrid/jsgrid.min.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='thirdparty/jsgrid/jsgrid-theme.min.css') }}">
-
+<script src="{{ url_for('static', filename='thirdparty/chosen/chosen.jquery.min.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='thirdparty/chosen/chosen.min.css') }}">
+<script src="{{ url_for('static', filename='roster.js') }}"></script>
 <script>
     $(function() {
-        initialize_roster_entry_grid("roster-entry-grid", {{ roster.id}});
+        initialize_roster_entry_grid("roster-entry-grid", {{ roster.id}} );
     });
         
 

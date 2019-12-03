@@ -1,8 +1,8 @@
 from . import app, db
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, abort
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
-from .models import Roster, User
+from .models import Roster, User, Wargear
 from .forms import LoginForm, RegistrationForm
 from .report import generate_report
 import tempfile
