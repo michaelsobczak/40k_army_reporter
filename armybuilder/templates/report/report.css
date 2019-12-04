@@ -1,5 +1,14 @@
-@media print { .tactics-container { page-break-inside:avoid; } .tactic-cell { page-break-inside: avoid; } }
-
+@media print { .tactics-cell { page-break-inside: avoid; break-inside: avoid; } .tactic-cell { page-break-inside: avoid; } }
+@media print  
+{
+    div {
+        page-break-inside: avoid;
+    }
+    .breaker { 
+      break-before: always;
+      page-break-before: always;
+    }
+}
 @page { size: auto;  margin: 0mm; }
 
 td {
@@ -89,19 +98,17 @@ h2.tactic_label {
   width: 100%;
 }
 .tactic-cell {
+  position: relative;
   background-color: gainsboro;
   margin: 0.5%;
-  display: inline-block;
-  float: left;
   break-after: avoid-page;
   border-style: solid;
 }
 
 
 .tactics-container {
-  display: inline-block;
-  width: 33%;
-  float: left;
+  display: grid;
+  grid-template-columns: auto auto auto;
 }
 .tactic-cell-heading-div {
   text-align: center;
@@ -115,7 +122,7 @@ h2.tactic_label {
 .tactic-cell-text-div {
   padding: 3%;
   font-size: 1vw;
-
+  margin-bottom: 5%
 }
 
 .tactic-cost-div {
@@ -129,6 +136,10 @@ h2.tactic_label {
 
 .tactic-cell-bottom-div {
   background-color: gray;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 .stroke-me
