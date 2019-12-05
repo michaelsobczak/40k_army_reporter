@@ -1,21 +1,27 @@
-@media print { .tactics-cell { page-break-inside: avoid; break-inside: avoid; } .tactic-cell { page-break-inside: avoid; } }
+@media print { .tactics-cell { page-break-inside: avoid; break-inside: avoid; } }
 @media print  
 {
-    div {
+    .data-card-div {
+      break-before: left;
+    }
+    div{
         page-break-inside: avoid;
+        break-inside: avoid-page;
     }
     .breaker { 
       break-before: always;
       page-break-before: always;
     }
 }
-@page { size: auto;  margin: 0mm; }
+@page { size: auto;  margin: 0.5in 0.5in 0.5in 0.5in; }
 
 td {
   text-align: center;
   background-color: beige;
+  font-size: 0.5vw;
 }
 th {
+  font-size: 0.5vw;
 }
 .roster-container {
   margin: 0 auto;
@@ -55,18 +61,27 @@ th {
 .data-card-abilities {
   background-color: gainsboro;
   padding: 0.5%;
+  font-size: 0.5vw;
 }
 
+.data-card-specialization {
+  font-size: 0.5vw;
+}
 
 .data-card-container {
   /* width: 8.5in; */
   margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2,3.5in);
+  grid-template-rows: auto;
+
 }
 .data-card-div {
     border-style: solid;
-    display: inline-block;
     padding: 1%;
     position: relative;
+    margin: 0.5%;
+    font-size: 0.5vw;
 }
 
 .data-card-table {
@@ -79,7 +94,7 @@ th {
 }
 
 .data-card-weapon-ability-field {
-  font-size: 1vh;
+  font-size: 0.5vh;
 }
 
 .points-text {
