@@ -51,6 +51,7 @@ def make_secondary_table(a: str, b: str) -> Table:
 
 figure_keyword_table = make_secondary_table('figure', 'keyword')
 figure_ability_table = make_secondary_table('figure', 'ability')
+figure_wargear_table = make_secondary_table('figure', 'wargear')
 wargear_ability_table = make_secondary_table('wargear', 'ability')
 roster_entry_wargear_table = make_secondary_table('rosterentry', 'wargear')
 faction_ability_table = make_secondary_table('faction', 'ability')
@@ -120,6 +121,7 @@ class Figure(Base):
     leadership = Column(Text)
     save = Column(Text)
     max_number = Column(Integer)
+    allowed_wargear = relationship('Wargear', secondary=figure_wargear_table, back_populates='figures', lazy='subquery')
 
     factions = relationship(
         'Faction', secondary=figure_faction_table,
@@ -154,6 +156,13 @@ class Wargear(Base):
     ap = Column(Text)
     damage = Column(Text)
     points = Column(Integer)
+
+    figures = relationship(
+        'Figure',
+        secondary=figure_wargear_table,
+        back_populates='allowed_wargear',
+        lazy='subquery'
+    )
 
     abilities = relationship(
         'Ability',
