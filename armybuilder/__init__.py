@@ -72,5 +72,5 @@ manager.create_api(Roster, include_methods=['points'], methods=['GET', 'POST', '
 manager.create_api(RosterEntry, allow_delete_many=True, include_methods=['points'], methods=['GET', 'POST', 'PUT', 'DELETE'])
 manager.create_api(Specialization, results_per_page=-1, methods=['GET', 'POST', 'PUT', 'DELETE'])
 manager.create_api(Wargear, results_per_page=-1,  methods=['GET', 'POST', 'PUT', 'DELETE'])
-manager.create_api(Figure, results_per_page=-1, methods=['GET', 'POST', 'PUT', 'DELETE'])
+manager.create_api(Figure, include_methods=['displayName'], results_per_page=-1, methods=['GET', 'POST', 'PUT', 'DELETE'])
 from . import views, report

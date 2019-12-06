@@ -148,6 +148,13 @@ class Figure(Base):
     def __str__(self):
         return f'{self.figure_type if self.figure_type else ""} {self.figure_name if self.figure_name else ""}'
 
+    @property
+    def displayName(self):
+        dn = self.figure_type
+        if self.figure_name:
+            dn += f' {self.figure_name}'
+        return dn
+
 class Wargear(Base):
     __tablename__ = 'wargear'
     id = Column(Integer, primary_key=True)

@@ -11,11 +11,23 @@ RelationshipSelectField.prototype = new jsGrid.SelectField({
     items: [],
     textField: "",
     url: null,
+    headerStr: null,
+    relationshipObjStr: (obj) => {
+        return obj.name ? obj.name : obj.id;
+    },
     itemTemplate: function(value, item) {
+        
         return $('<div>')
                     .addClass(this.name + '-field')
                     .attr('id', 'grid-' + item['id'] + '-' + this.name + '-field')
-                    .text(item.displayName ? item.displayName : item.name);
+                    .text(this.relationshipObjStr(item[this.name.replace('_id', '')]));
+    },
+    headerTemplate: function() {
+        var text = this.headerStr;
+        if (!text) {
+            text = this.name.replace('_id', '');
+        }
+        return $('<p>').text(text);
     },
     editTemplate: function(value, item) {
         
@@ -23,9 +35,13 @@ RelationshipSelectField.prototype = new jsGrid.SelectField({
         var sel = $('<select>')
                         .addClass(this.name + '-select-field chosen-select')
                         .attr('id', sel_id);
+        var self = this;
         $.get(this.url, null, function(data, textStatus, jqXHR ) {
             $(data['objects']).each(function() {
-                sel.append($("<option>").attr('value',this.id).text(this.figure_type + ' ' + this.figure_name));
+                console.log('self');
+                console.log(self);
+                console.log(this);
+                sel.append($("<option>").attr('value',this.id).text(self.relationshipObjStr(this)));
             });
             if (value) {
                 sel.val(value);
@@ -42,29 +58,19 @@ RelationshipSelectField.prototype = new jsGrid.SelectField({
         var sel = $('<select>')
                         .addClass(this.name + '-select-field chosen-select')
                         .attr('id', sel_id);
+        var self = this;
         $.get(this.url, null, function(data, textStatus, jqXHR ) {
             $(data['objects']).each(function() {
-                sel.append($("<option>").attr('value',this.id).text(this.figure_type + ' ' + this.figure_name));
+                sel.append($("<option>").attr('value',this.id).text(self.relationshipObjStr(this)));
             });
             sel.chosen();
         });
         this.editControl = this._insertControl = this.insertControl = sel;
         return sel;
-    },
-    
-    insertValue: function() {
-        return this._insertControl.find("option:selected").map(function() {    
-            return this.selected ? $(this).text() : null;
-        });
-    },
-    
-    editValue: function() {
-        return this._editControl.find("option:selected").map(function() {    
-            return this.selected ? $(this).text() : null;
-        });
     }
     
 });
+
 
 jsGrid.fields.relationship = RelationshipSelectField;
 
@@ -194,102 +200,19 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
             fields: [
                 { name: "id", visible: false},
                 { name: "name", type: "text"},
-                { name: "figure_id", type: "select", width: 200, itemTemplate: function(value, item) {
-                    return $('<div>')
-                                .addClass('figure-field')
-                                .attr('id', 'roster-entry-' + item['id'] + '-figure-field')
-                                .text(item['figure']['figure_type'] + ' ' + item['figure']['figure_name']);
-                }, editTemplate: function(value, item) {
-                    
-                    var sel_id = 'roster-entry-' + item['id'] + '-figure-select';
-                    var sel = $('<select>')
-                                    .addClass('figure-select-field chosen-select')
-                                    .attr('id', sel_id);
-                    $.get('/api/figure', null, function(data, textStatus, jqXHR ) {
-                        $(data['objects']).each(function() {
-                            sel.append($("<option>").attr('value',this.id).text(this.figure_type + ' ' + this.figure_name));
-                        });
-                        if (value) {
-                            sel.val(value);
-                        }
-                        sel.chosen();
-                    });
-
-                    this.editControl = sel;
-                    return sel;
-                }, insertTemplate: function() {
-                    
-                    var sel_id = 'roster-entry-insert-figure-select';
-                    var sel = $('<select>')
-                                    .addClass('figure-select-field chosen-select')
-                                    .attr('id', sel_id);
-                    $.get('/api/figure', null, function(data, textStatus, jqXHR ) {
-                        $(data['objects']).each(function() {
-                            sel.append($("<option>").attr('value',this.id).text(this.figure_type + ' ' + this.figure_name));
-                        });
-                        sel.chosen();
-                    });
-                    this.editControl = this._insertControl = this.insertControl = sel;
-                    return sel;
-                }},
-                { name: "specialization_id", type: "select", itemTemplate: function(value, item) {
-                    var spec = '';
-                    if (value) {
-                        spec = item['specialization']['name'];
+                { name: "figure_id", type: "relationship", url: "/api/figure", relationshipObjStr: (obj) => {
+                    if (!obj) {
+                        return '';
                     }
-                    return $('<div>')
-                                .addClass('specialization-field chosen-select')
-                                .attr('id', 'roster-entry-' + item['id'] + '-specialization-field')
-                                .text(spec);
-                }, editTemplate: function(value, item) {
-                    
-                    var sel_id = 'roster-entry-' + item['id'] + '-specialization-select';
-                    var sel = $('<select>')
-                                    .addClass('specialization-select-field chosen-select')
-                                    .attr('id', sel_id);
-                    $.get('/api/specialization', null, function(data, textStatus, jqXHR ) {
-                        console.log(data);
-                        console.log(sel_id);
-                        $(data['objects']).each(function() {
-                            sel.append($("<option>").attr('value',this.id).text(this.name));
-                        });
-                        if (value) {
-                            sel.val(value);
-                        }
-                        sel.chosen();
-                    });
-                    this.editControl = sel;
-
-                    return sel;
-    
-                }, insertTemplate: function() {
-                    
-                    var sel_id = 'roster-entry-insert-specialization-select';
-                    var sel = $('<select>')
-                                    .addClass('specialization-select-field chosen-select')
-                                    .attr('id', sel_id);
-                    $.get('/api/specialization', null, function(data, textStatus, jqXHR ) {
-                        $(data['objects']).each(function() {
-                            sel.append($("<option>").attr('value',this.id).text(this.name));
-                        });
-                        sel.chosen();
-                    });
-                    this.editControl = this._insertControl = this.insertControl = sel;
-                    return sel;
-    
+                    var s = obj.figure_name;
+                    if (obj.figure_type && obj.figure_type.length > 0) {
+                        s += ' ' + obj.figure_type;
+                    }
+                    return s;
                 }},
-                // { name: "wargear", itemTemplate: function(value, item) {
-                //     var wargear_str = ''
-                //     if (value) {
-                //         for (var i = 0; i < value.length; i++) {
-                //             wargear_str += value[i]['name'] + '\n';
-                //         }
-                //     }
-                //     return $('<div>')
-                //                 .addClass('wargear-field')
-                //                 .attr('id', 'roster-entry-' + item['id'] + '-wargear-field')
-                //                 .text(wargear_str);
-                // }},
+                { name: "specialization_id", type: "relationship", url: "/api/specialization", relationshipObjStr: (obj) => {
+                    return obj ? obj.name : '';
+                }},
                 { name: "wargear", type: "select", width: 250, align: "center", items: wargear, textField: "name", valueField: "id",
                 editValue: function() {
                     var values = this.editControl.find("option:selected").map(function() {    
