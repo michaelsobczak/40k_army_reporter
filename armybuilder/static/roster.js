@@ -422,3 +422,81 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
     });
     
 }
+
+
+function initialize_roster_grid(roster_grid_id) {
+
+    function load_roster(filter) {
+        var pageIndex = $(gs).data('JSGrid').pageIndex;
+        var pageSize = $(gs).data('JSGrid').pageSize;
+        var d = $.Deferred();
+        $.ajax({
+            url: "/api/roster?" + "page=" + pageIndex + "&results_per_page=" + pageSize,
+            dataType: "json"
+        }).done(function(response) {
+            var data = response['objects'];
+            d.resolve(data);
+        });
+    
+        return d.promise();
+    }
+
+    function update_roster(item) {
+        var d = $.Deferred();
+        $.ajax({
+            type: "PUT",
+            url: "/api/roster/" + item.id,
+            contentType: "application/json",
+            data: JSON.stringify(item),
+        }).done(function(response) {
+            d.resolve(response);
+        });
+        return d.promise();
+    }
+
+    function delete_roster(item) {
+        return $.ajax({
+            type: "DELETE",
+            url: "/api/roster/" + item.id,
+        });
+    }
+
+    function insert_roster(item) {
+        var d = $.Deferred();
+        $.ajax({
+            type: "POST",
+            url: "/api/roster",
+            contentType: "application/json",
+            data: JSON.stringify(item),
+        }).done(function(response) {
+            d.resolve(response);
+        });
+        return d.promise();
+    }
+
+    var gs = "#" + roster_grid_id;
+    $(gs).jsGrid({
+        width: "100%",
+        sorting: false,
+        paging: true,
+        autoload: true,
+        inserting: true,
+        pageSize: 20,
+        editing: true,
+        controller: {
+            loadData: load_roster,
+            updateItem: update_roster,
+            deleteItem: delete_roster,
+            insertItem: insert_roster
+        },
+        fields: [
+            { name: "id", visible: false},
+            { name: "name", type: "text", itemTemplate: function(value, item) {
+                return $('<a>')
+                            .attr('href', '/roster/' + item.id)
+                            .text(value);
+            }},
+            { type: "control" }
+        ]
+    });
+}

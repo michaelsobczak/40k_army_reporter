@@ -51,7 +51,11 @@ class UserView(ArmybuilderModelView):
     column_list = ['username', 'email', 'roles', 'rosters']
     column_editable_list = ['username', 'email', 'roles', 'rosters']
 
-admin.add_view(ArmybuilderModelView(Figure, db.session, category='Pieces'))
+class FigureView(ArmybuilderModelView):
+    column_list = ['figure_type', 'figure_name', 'move', 'weapon_skill', 'ballistic_skill', 'strength', 'toughness', 'wounds', 'attacks', 'leadership', 'save', 'max_number', 'allowed_wargear', 'allowed_specializations', 'factions', 'keywords','abilities', 'points']
+    column_editable_list = ['figure_type', 'figure_name', 'move', 'weapon_skill', 'ballistic_skill', 'strength', 'toughness', 'wounds', 'attacks', 'leadership', 'save', 'max_number', 'allowed_wargear', 'allowed_specializations', 'factions', 'keywords','abilities', 'points']
+
+admin.add_view(FigureView(Figure, db.session, category='Pieces'))
 admin.add_view(ArmybuilderModelView(Wargear, db.session, category='Pieces'))
 admin.add_view(ArmybuilderModelView(Keyword, db.session, category='Metadata'))
 admin.add_view(ArmybuilderModelView(Ability, db.session, category='Rules'))
