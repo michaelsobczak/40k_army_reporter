@@ -1,57 +1,55 @@
 
+var RelationshipSelectField = function(config) {
+    jsGrid.Field.call(this, config);
+}
 var MultiselectField = function(config) {
     jsGrid.Field.call(this, config);
 };
 
-MultiselectField.prototype = new jsGrid.Field({
+RelationshipSelectField.prototype = new jsGrid.SelectField({
     
     items: [],
     textField: "",
-    
-    itemTemplate: function(value) {
-        return $.makeArray(value).join(", ");
+    url: null,
+    itemTemplate: function(value, item) {
+        return $('<div>')
+                    .addClass(this.name + '-field')
+                    .attr('id', 'grid-' + item['id'] + '-' + this.name + '-field')
+                    .text(item.displayName ? item.displayName : item.name);
     },
-    
-    _createSelect: function(selected) {
-        var textField = this.textField;
-        var $result = $("<select>").attr("multiple", "multiple");
+    editTemplate: function(value, item) {
         
-        $.each(this.items, function(_, item) {
-            var value = item[textField];
-            var $opt = $("<option>").text(value);
-            
-            if($.inArray(value, selected) > -1) {
-                $opt.attr("selected", "selected");
+        var sel_id = 'grid-' + item['id'] + '-' + this.name + '-select';
+        var sel = $('<select>')
+                        .addClass(this.name + '-select-field chosen-select')
+                        .attr('id', sel_id);
+        $.get(this.url, null, function(data, textStatus, jqXHR ) {
+            $(data['objects']).each(function() {
+                sel.append($("<option>").attr('value',this.id).text(this.figure_type + ' ' + this.figure_name));
+            });
+            if (value) {
+                sel.val(value);
             }
-            
-            $result.append($opt);
+            sel.chosen();
         });
-        
-        return $result;
+        this.editControl = sel;
+        return sel;
     },
     
     insertTemplate: function() {
-        var insertControl = this._insertControl = this._createSelect();
         
-        setTimeout(function() {
-            insertControl.multiSelect({
-                minWidth: 140
-            }); 
-        });
-        
-        return insertControl;
-    },
-    
-    editTemplate: function(value) {
-        var editControl = this._editControl = this._createSelect(value);
-        
-        setTimeout(function() {
-            editControl.multiSelect({
-                minWidth: 140
+        var sel_id = 'grid-insert-' + this.name + '-select';
+        var sel = $('<select>')
+                        .addClass(this.name + '-select-field chosen-select')
+                        .attr('id', sel_id);
+        $.get(this.url, null, function(data, textStatus, jqXHR ) {
+            $(data['objects']).each(function() {
+                sel.append($("<option>").attr('value',this.id).text(this.figure_type + ' ' + this.figure_name));
             });
+            sel.chosen();
         });
-        
-        return editControl;
+        this.editControl = this._insertControl = this.insertControl = sel;
+        return sel;
     },
     
     insertValue: function() {
@@ -68,7 +66,7 @@ MultiselectField.prototype = new jsGrid.Field({
     
 });
 
-jsGrid.fields.multiselect = MultiselectField;
+jsGrid.fields.relationship = RelationshipSelectField;
 
 function shallow_copy_data(mainObj) {
     let objCopy = {}; // objCopy will store a copy of the mainObj
