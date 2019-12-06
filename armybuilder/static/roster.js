@@ -258,7 +258,6 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                 // }},
                 { name: "wargear", type: "select", width: 250, align: "center", items: wargear, textField: "name", valueField: "id",
                 editValue: function() {
-                    
                     var values = this.editControl.find("option:selected").map(function() {    
                         var selected_val = this.selected ? $(this).val() : null;
                         var selected = wargear_id_map[selected_val];
@@ -284,20 +283,54 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                                     .addClass('specialization-select-field form-control')
                                     .prop('multiple', 'true')
                                     .attr('id', sel_id);
-                    
-                    $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
-                        
-                        $(data['objects']).each(function() {
-                            sel.append($("<option>").attr('value',this.id).text(this.name));
+                    if (item['figure_id'] != null) {
+                        $.get('/api/figure/' + item['figure_id'] + '/allowed_wargear', null, (resp) => {
+                            var objects = resp['objects'];
+                            if (objects.length > 0) {
+                                console.log("Found allowed list");
+                                $(resp['objects']).each(function() {
+                                    sel.append($("<option>").attr('value',this.id).text(this.name));
+                                    
+                                });
+                                var sel_vals = [];
+                                for (var i = 0; i < value.length; i++) {
+                                    sel_vals.push(value[i].id);
+                                }
+                                sel.val(sel_vals);
+                                sel.chosen();
+                            }
+                            else {
+                                $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
                             
+                                    $(data['objects']).each(function() {
+                                        sel.append($("<option>").attr('value',this.id).text(this.name));
+                                        
+                                    });
+                                    var sel_vals = [];
+                                    for (var i = 0; i < value.length; i++) {
+                                        sel_vals.push(value[i].id);
+                                    }
+                                    sel.val(sel_vals);
+                                    sel.chosen();
+                                });
+                            }
                         });
-                        var sel_vals = [];
-                        for (var i = 0; i < value.length; i++) {
-                            sel_vals.push(value[i].id);
-                        }
-                        sel.val(sel_vals);
-                        sel.chosen();
-                    });
+                    }
+                    else {
+                        $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
+                            
+                            $(data['objects']).each(function() {
+                                sel.append($("<option>").attr('value',this.id).text(this.name));
+                                
+                            });
+                            var sel_vals = [];
+                            for (var i = 0; i < value.length; i++) {
+                                sel_vals.push(value[i].id);
+                            }
+                            sel.val(sel_vals);
+                            sel.chosen();
+                        });
+                    }
                     this.editControl = sel;
 
                     return sel;
