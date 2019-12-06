@@ -1,12 +1,27 @@
-@media print
+@media print { .tactics-cell { page-break-inside: avoid; break-inside: avoid; } }
+@media print  
 {
-    .tactics-container { page-break-inside:avoid; }
+    .data-card-div {
+      break-before: left;
+    }
+    div{
+        page-break-inside: avoid;
+        break-inside: avoid-page;
+    }
+    .breaker { 
+      break-before: always;
+      page-break-before: always;
+    }
 }
+@page { size: auto;  margin: 0.5in 0.5in 0.5in 0.5in; }
+
 td {
   text-align: center;
   background-color: beige;
+  font-size: 0.5vw;
 }
 th {
+  font-size: 0.5vw;
 }
 .roster-container {
   margin: 0 auto;
@@ -46,18 +61,27 @@ th {
 .data-card-abilities {
   background-color: gainsboro;
   padding: 0.5%;
+  font-size: 0.5vw;
 }
 
+.data-card-specialization {
+  font-size: 0.5vw;
+}
 
 .data-card-container {
   /* width: 8.5in; */
   margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2,3.5in);
+  grid-template-rows: auto;
+
 }
 .data-card-div {
     border-style: solid;
-    display: inline-block;
     padding: 1%;
     position: relative;
+    margin: 0.5%;
+    font-size: 0.5vw;
 }
 
 .data-card-table {
@@ -70,7 +94,7 @@ th {
 }
 
 .data-card-weapon-ability-field {
-  font-size: 1vh;
+  font-size: 0.5vh;
 }
 
 .points-text {
@@ -89,25 +113,56 @@ h2.tactic_label {
   width: 100%;
 }
 .tactic-cell {
-  width : 20%;
-  height: 30%;
+  position: relative;
   background-color: gainsboro;
   margin: 0.5%;
-  display: inline-block;
-  float: left;
+  break-after: avoid-page;
+  border-style: solid;
 }
 
+
+.tactics-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
 .tactic-cell-heading-div {
   text-align: center;
   background-color: #f8422a;
   padding: 1%;
+  font-weight: bold;
+  border-bottom: #5a180f 1px solid;
+  font-size: 1.17vw;
 }
 
 .tactic-cell-text-div {
   padding: 3%;
-
+  font-size: 1vw;
+  margin-bottom: 5%
 }
 
 .tactic-cost-div {
-  float: right;
+  color: black;
+  background-color: cornsilk;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.17vw;
+  padding: 1%;
+}
+
+.tactic-cell-bottom-div {
+  background-color: gray;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.stroke-me
+{
+    color: corncrimflowerblue;
+    text-shadow:
+    -1px -1px 0 rgb(58, 57, 57),
+    1px -1px 0 rgb(58, 57, 57),
+    -1px 1px 0 rgb(58, 57, 57),
+    1px 1px 0 rgb(58, 57, 57);  
 }

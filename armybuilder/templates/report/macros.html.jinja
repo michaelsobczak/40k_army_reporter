@@ -104,10 +104,10 @@
     </tr>
 {% endmacro %}
 
-{% macro create_data_card(roster_entry) %}
-
+{% macro create_data_card(roster_entry,index) %}
+    
     <div class="data-card-div">
-        <p> {{ roster_entry.id }} : {{roster_entry.name}} </p>
+        <p> {{ index }} : {{roster_entry.name}} </p>
         <p class="points-text"> {{ roster_entry.points }} Points </p>
         <div class="data-card-table-container">
             <table class="data-card-table">
@@ -127,11 +127,12 @@
                 <p><b>{{ability.name}}</b>: {{ability.text}}</p>
             {% endfor %}
         </div>
-        {% if roster_entry.specialization %}
-        <p><b>Specialization {{ roster_entry.specialization.name }}</b></p><p>{{ roster_entry.specialization.passive }}</p>
-        {% else %}
-        
-        {% endif %}
+        <div class="data-card-specialization">
+            {% if roster_entry.specialization %}
+                <p><b>Specialization {{ roster_entry.specialization.name }}</b></p><p>{{ roster_entry.specialization.passive }}</p>
+            {% else %}
+            {% endif %}
+        </div>
     </div>
 {% endmacro %}
 
@@ -140,12 +141,20 @@
    <div class="tactic-cell">
         <div class="tactic-cell-heading-div">
             {{ tactic.name }} 
-            <div class="tactic-cost-div">
-                {{tactic.cost}}CP
-            </div>
+            
         </div>
         <div class="tactic-cell-text-div">
             {{ tactic.text }}
+        </div>
+        <div class="tactic-cell-bottom-div">
+           <div class="tactic-cost-div">
+                {{tactic.cost}} 
+                {% if tactic.cost > 1 %}
+                    Command Points
+                {% else %}
+                    Command Point
+                {% endif %}
+            </div>
         </div>
    </div>
 {% endmacro %}

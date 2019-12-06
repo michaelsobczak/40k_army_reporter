@@ -2,7 +2,7 @@
 {% block content %}
     <div class="data-card-container">
         {% for roster_entry in roster.entries %}
-            {{ macros.create_data_card(roster_entry) }}
+            {{ macros.create_data_card(roster_entry,roster.entries.index(roster_entry) + 1) }}
         {% endfor %}
     </div>
 {% endblock %}
