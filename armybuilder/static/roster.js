@@ -128,13 +128,20 @@ function delete_data(item) {
 
 function insert_data(item) {
     var d = $.Deferred();
-    console.log(item);
-    delete item.wargear.prevObject;
+    var clean_item = {};
+    clean_item['specialization_id'] = item.specialization_id;
+    clean_item['figure_id'] = item.figure_id;
+    clean_item['wargear'] = [];
+    for (var i = 0; i < item['wargear'].length; i++) {
+        var wg = item.wargear[i];
+        clean_item['wargear'].push(wg);
+    }
+    clean_item['name'] = item.name;
     $.ajax({
         type: "POST",
         url: "/api/rosterentry",
         contentType: "application/json",
-        data: JSON.stringify(item),
+        data: JSON.stringify(clean_item),
     }).done(function(response) {
         d.resolve(response);
     });
@@ -212,6 +219,20 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
 
                     this.editControl = sel;
                     return sel;
+                }, insertTemplate: function() {
+                    
+                    var sel_id = 'roster-entry-insert-figure-select';
+                    var sel = $('<select>')
+                                    .addClass('figure-select-field chosen-select')
+                                    .attr('id', sel_id);
+                    $.get('/api/figure', null, function(data, textStatus, jqXHR ) {
+                        $(data['objects']).each(function() {
+                            sel.append($("<option>").attr('value',this.id).text(this.figure_type + ' ' + this.figure_name));
+                        });
+                        sel.chosen();
+                    });
+                    this.editControl = this._insertControl = this.insertControl = sel;
+                    return sel;
                 }},
                 { name: "specialization_id", type: "select", itemTemplate: function(value, item) {
                     var spec = '';
@@ -243,6 +264,21 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
 
                     return sel;
     
+                }, insertTemplate: function() {
+                    
+                    var sel_id = 'roster-entry-insert-specialization-select';
+                    var sel = $('<select>')
+                                    .addClass('specialization-select-field chosen-select')
+                                    .attr('id', sel_id);
+                    $.get('/api/specialization', null, function(data, textStatus, jqXHR ) {
+                        $(data['objects']).each(function() {
+                            sel.append($("<option>").attr('value',this.id).text(this.name));
+                        });
+                        sel.chosen();
+                    });
+                    this.editControl = this._insertControl = this.insertControl = sel;
+                    return sel;
+    
                 }},
                 // { name: "wargear", itemTemplate: function(value, item) {
                 //     var wargear_str = ''
@@ -268,6 +304,17 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                     console.log('values')
                     console.log(values);
                     return values;
+                }, insertValue: function() {
+                    var values = this._insertControl.find("option:selected").map(function() {    
+                        var selected_val = this.selected ? $(this).val() : null;
+                        var selected = wargear_id_map[selected_val];
+                        delete selected.roster_entries;
+                        delete selected.prevObject;
+                        return selected;
+                    });
+                    console.log('values')
+                    console.log(values);
+                    return values;
                 }, itemTemplate: function(value, item) {
                     var s = '';
                     for (var i = 0; i < value.length; i++) {
@@ -280,7 +327,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                     console.log(item);
                     var sel_id = 'roster-entry-' + item['id'] + '-wargear-select';
                     var sel = $('<select>')
-                                    .addClass('specialization-select-field form-control')
+                                    .addClass('wargear-select-field form-control')
                                     .prop('multiple', 'true')
                                     .attr('id', sel_id);
                     if (item['figure_id'] != null) {
@@ -335,7 +382,26 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
 
                     return sel;
     
-                } },
+                }, insertTemplate: function() {
+                    var sel_id = 'roster-entry-insert-wargear-select';
+                    var sel = $('<select>')
+                                    .addClass('wargear-select-field form-control')
+                                    .prop('multiple', 'true')
+                                    .attr('id', sel_id);
+                    $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
+                        
+                        $(data['objects']).each(function() {
+                            sel.append($("<option>").attr('value',this.id).text(this.name));
+                            
+                        });
+                        sel.chosen();
+                    });
+                    
+                    this.editControl = this._insertControl = this.insertControl = sel;
+
+                    return sel;
+    
+                }  },
                 { name: "points" },
                 { name: "control", width: 100, type: "control", itemTemplate: function(value, item) {
                     var $result = jsGrid.fields.control.prototype.itemTemplate.apply(this, arguments);
