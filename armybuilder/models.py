@@ -60,7 +60,7 @@ tactic_faction_table = make_secondary_table('tactic', 'faction')
 roster_faction_table = make_secondary_table('roster', 'faction')
 user_roster_table = make_secondary_table('user', 'roster')
 user_role_table = make_secondary_table('user', 'role')
-
+figure_specialization_table = make_secondary_table('figure', 'specialization')
 class User(UserMixin, Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
@@ -122,7 +122,10 @@ class Figure(Base):
     save = Column(Text)
     max_number = Column(Integer)
     allowed_wargear = relationship('Wargear', secondary=figure_wargear_table, back_populates='figures', lazy='subquery')
-
+    allowed_specializations = relationship('Specialization',
+        secondary=figure_specialization_table,
+        back_populates='figures',
+        lazy='subquery')
     factions = relationship(
         'Faction', secondary=figure_faction_table,
         back_populates='figures',
@@ -232,6 +235,8 @@ class Specialization(Base):
     tactic_id = Column(Integer, ForeignKey('tactic.id'))
     tactic = relationship('Tactic')
     passive = Column(Text)
+
+    figures = relationship('Figure', secondary=figure_specialization_table, back_populates='allowed_specializations', lazy='subquery')
 
     def __str__(self):
         return self.name
