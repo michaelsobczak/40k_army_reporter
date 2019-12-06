@@ -1,9 +1,10 @@
 
 var RelationshipSelectField = function(config) {
-    jsGrid.Field.call(this, config);
-}
-var MultiselectField = function(config) {
-    jsGrid.Field.call(this, config);
+    jsGrid.SelectField.call(this, config);
+};
+
+var RelationshipMultiselectField = function(config) {
+    jsGrid.SelectField.call(this, config);
 };
 
 RelationshipSelectField.prototype = new jsGrid.SelectField({
@@ -11,6 +12,7 @@ RelationshipSelectField.prototype = new jsGrid.SelectField({
     items: [],
     textField: "",
     url: null,
+    fallback_url: null,
     headerStr: null,
     relationshipObjStr: (obj) => {
         return obj.name ? obj.name : obj.id;
@@ -37,6 +39,7 @@ RelationshipSelectField.prototype = new jsGrid.SelectField({
                         .attr('id', sel_id);
         var self = this;
         $.get(this.url, null, function(data, textStatus, jqXHR ) {
+            
             $(data['objects']).each(function() {
                 console.log('self');
                 console.log(self);
@@ -71,9 +74,123 @@ RelationshipSelectField.prototype = new jsGrid.SelectField({
     
 });
 
+RelationshipMultiselectField.prototype = new jsGrid.SelectField({
+    textField: "",
+    url: null,
+    fallback_url: null,
+    headerStr: null,
+    editValue: function() {
+        var values = this.editControl.find("option:selected").map(function() {    
+            var selected_val = this.selected ? $(this).val() : null;
+            var selected = wargear_id_map[selected_val];
+            delete selected.roster_entries;
+            delete selected.prevObject;
+            return selected;
+        });
+        return values;
+    },
+    insertValue: function() {
+        var values = this._insertControl.find("option:selected").map(function() {    
+            var selected_val = this.selected ? $(this).val() : null;
+            var selected = wargear_id_map[selected_val];
+            delete selected.roster_entries;
+            delete selected.prevObject;
+            return selected;
+        });
+        return values;
+    },
+    itemTemplate: function(value, item) {
+        var s = '';
+        for (var i = 0; i < value.length; i++) {
+            s += value[i].name + ' ' + (value[i].profile ? value[i].profile : '') + '<br />';
+        }
+        return '<div>' + s + '</div>';
+    },
+    editTemplate: function(value, item) {
+        console.log('inside edit template');
+        console.log(value);
+        console.log(item);
+        var sel_id = 'roster-entry-' + item['id'] + '-wargear-select';
+        var sel = $('<select>')
+                        .addClass('wargear-select-field form-control')
+                        .prop('multiple', 'true')
+                        .attr('id', sel_id);
+        if (item['figure_id'] != null) {
+            $.get('/api/figure/' + item['figure_id'] + '/allowed_wargear', null, (resp) => {
+                var objects = resp['objects'];
+                if (objects.length > 0) {
+                    console.log("Found allowed list");
+                    $(resp['objects']).each(function() {
+                        sel.append($("<option>").attr('value',this.id).text(this.name));
+                        
+                    });
+                    var sel_vals = [];
+                    for (var i = 0; i < value.length; i++) {
+                        sel_vals.push(value[i].id);
+                    }
+                    sel.val(sel_vals);
+                    sel.chosen();
+                }
+                else {
+                    $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
+                
+                        $(data['objects']).each(function() {
+                            sel.append($("<option>").attr('value',this.id).text(this.name));
+                            
+                        });
+                        var sel_vals = [];
+                        for (var i = 0; i < value.length; i++) {
+                            sel_vals.push(value[i].id);
+                        }
+                        sel.val(sel_vals);
+                        sel.chosen();
+                    });
+                }
+            });
+        }
+        else {
+            $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
+                
+                $(data['objects']).each(function() {
+                    sel.append($("<option>").attr('value',this.id).text(this.name));
+                    
+                });
+                var sel_vals = [];
+                for (var i = 0; i < value.length; i++) {
+                    sel_vals.push(value[i].id);
+                }
+                sel.val(sel_vals);
+                sel.chosen();
+            });
+        }
+        this.editControl = sel;
 
+        return sel;
+
+    },
+    insertTemplate: function() {
+        var sel_id = 'roster-entry-insert-wargear-select';
+        var sel = $('<select>')
+                        .addClass('wargear-select-field form-control')
+                        .prop('multiple', 'true')
+                        .attr('id', sel_id);
+        $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
+            
+            $(data['objects']).each(function() {
+                sel.append($("<option>").attr('value',this.id).text(this.name));
+                
+            });
+            sel.chosen();
+        });
+        
+        this.editControl = this._insertControl = this.insertControl = sel;
+
+        return sel;
+
+    }
+});
 jsGrid.fields.relationship = RelationshipSelectField;
-
+jsGrid.fields.relationshipmulti = RelationshipMultiselectField;
 function shallow_copy_data(mainObj) {
     let objCopy = {}; // objCopy will store a copy of the mainObj
     let key;
@@ -251,56 +368,21 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                                     .addClass('wargear-select-field form-control')
                                     .prop('multiple', 'true')
                                     .attr('id', sel_id);
-                    if (item['figure_id'] != null) {
-                        $.get('/api/figure/' + item['figure_id'] + '/allowed_wargear', null, (resp) => {
-                            var objects = resp['objects'];
-                            if (objects.length > 0) {
-                                console.log("Found allowed list");
-                                $(resp['objects']).each(function() {
-                                    sel.append($("<option>").attr('value',this.id).text(this.name));
-                                    
-                                });
-                                var sel_vals = [];
-                                for (var i = 0; i < value.length; i++) {
-                                    sel_vals.push(value[i].id);
-                                }
-                                sel.val(sel_vals);
-                                sel.chosen();
-                            }
-                            else {
-                                $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
+                    $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
+                        
+                        $(data['objects']).each(function() {
+                            sel.append($("<option>").attr('value',this.id).text(this.name));
                             
-                                    $(data['objects']).each(function() {
-                                        sel.append($("<option>").attr('value',this.id).text(this.name));
-                                        
-                                    });
-                                    var sel_vals = [];
-                                    for (var i = 0; i < value.length; i++) {
-                                        sel_vals.push(value[i].id);
-                                    }
-                                    sel.val(sel_vals);
-                                    sel.chosen();
-                                });
-                            }
                         });
-                    }
-                    else {
-                        $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
-                            
-                            $(data['objects']).each(function() {
-                                sel.append($("<option>").attr('value',this.id).text(this.name));
-                                
-                            });
-                            var sel_vals = [];
-                            for (var i = 0; i < value.length; i++) {
-                                sel_vals.push(value[i].id);
-                            }
-                            sel.val(sel_vals);
-                            sel.chosen();
-                        });
-                    }
+                        var sel_vals = [];
+                        for (var i = 0; i < value.length; i++) {
+                            sel_vals.push(value[i].id);
+                        }
+                        sel.val(sel_vals);
+                        sel.chosen();
+                    });
+                    
                     this.editControl = sel;
-
                     return sel;
     
                 }, insertTemplate: function() {
