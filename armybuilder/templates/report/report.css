@@ -18,10 +18,10 @@
 td {
   text-align: center;
   background-color: beige;
-  font-size: 1.0vw;
+  font-size: 8pt;
 }
 th {
-  font-size: 1.0vw;
+  font-size: 9pt;
 }
 .roster-container {
   margin: 0 auto;
@@ -61,11 +61,11 @@ th {
 .data-card-abilities {
   background-color: gainsboro;
   padding: 0.5%;
-  font-size: 0.77vw;
+  font-size: 6ptvw;
 }
 
 .data-card-specialization {
-  font-size: 0.75vw;
+  font-size: 6pt;
 }
 
 .data-card-container {
@@ -95,7 +95,7 @@ th {
 }
 
 .data-card-weapon-ability-field {
-  font-size: 1.75vh;
+  font-size: 6pt;
 }
 
 .points-text {
