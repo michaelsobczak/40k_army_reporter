@@ -55,8 +55,13 @@ class FigureView(ArmybuilderModelView):
     column_list = ['figure_type', 'figure_name', 'move', 'weapon_skill', 'ballistic_skill', 'strength', 'toughness', 'wounds', 'attacks', 'leadership', 'save', 'max_number', 'allowed_wargear', 'allowed_specializations', 'factions', 'keywords','abilities', 'points']
     column_editable_list = ['figure_type', 'figure_name', 'move', 'weapon_skill', 'ballistic_skill', 'strength', 'toughness', 'wounds', 'attacks', 'leadership', 'save', 'max_number', 'allowed_wargear', 'allowed_specializations', 'factions', 'keywords','abilities', 'points']
 
+class WargearView(ArmybuilderModelView):
+    column_list = ['name', 'profile', 'wargear_range', 'wargear_type', 'strength', 'ap', 'damage', 'points']
+    column_editable_list = ['name', 'profile', 'wargear_range', 'wargear_type', 'strength', 'ap', 'damage', 'points']
+
+
 admin.add_view(FigureView(Figure, db.session, category='Pieces'))
-admin.add_view(ArmybuilderModelView(Wargear, db.session, category='Pieces'))
+admin.add_view(WargearView(Wargear, db.session, category='Pieces'))
 admin.add_view(ArmybuilderModelView(Keyword, db.session, category='Metadata'))
 admin.add_view(ArmybuilderModelView(Ability, db.session, category='Rules'))
 admin.add_view(ArmybuilderModelView(Specialization, db.session, category='Rules'))

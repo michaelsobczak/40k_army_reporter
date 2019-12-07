@@ -81,6 +81,7 @@ RelationshipMultiselectField.prototype = new jsGrid.SelectField({
     url: null,
     fallback_url: null,
     headerStr: null,
+    rosterId: null,
     editValue: function() {
         var values = this.editControl.find("option:selected").map(function() {    
             var selected_val = this.selected ? $(this).val() : null;
@@ -96,6 +97,7 @@ RelationshipMultiselectField.prototype = new jsGrid.SelectField({
             var selected_val = this.selected ? $(this).val() : null;
             var selected = wargear_id_map[selected_val];
             delete selected.roster_entries;
+
             delete selected.prevObject;
             return selected;
         });
@@ -249,27 +251,7 @@ function delete_data(item) {
     });
 }
 
-function insert_data(item) {
-    var d = $.Deferred();
-    var clean_item = {};
-    clean_item['specialization_id'] = item.specialization_id;
-    clean_item['figure_id'] = item.figure_id;
-    clean_item['wargear'] = [];
-    for (var i = 0; i < item['wargear'].length; i++) {
-        var wg = item.wargear[i];
-        clean_item['wargear'].push(wg);
-    }
-    clean_item['name'] = item.name;
-    $.ajax({
-        type: "POST",
-        url: "/api/rosterentry",
-        contentType: "application/json",
-        data: JSON.stringify(clean_item),
-    }).done(function(response) {
-        d.resolve(response);
-    });
-    return d.promise();
-}
+
 
 
 
@@ -299,6 +281,28 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                 d.resolve(data);
             });
         
+            return d.promise();
+        }
+        function insert_data(item) {
+            var d = $.Deferred();
+            var clean_item = {};
+            clean_item['specialization_id'] = item.specialization_id;
+            clean_item['figure_id'] = item.figure_id;
+            clean_item['roster_id'] = roster_id;
+            clean_item['wargear'] = [];
+            for (var i = 0; i < item['wargear'].length; i++) {
+                var wg = item.wargear[i];
+                clean_item['wargear'].push(wg);
+            }
+            clean_item['name'] = item.name;
+            $.ajax({
+                type: "POST",
+                url: "/api/rosterentry",
+                contentType: "application/json",
+                data: JSON.stringify(clean_item),
+            }).done(function(response) {
+                d.resolve(response);
+            });
             return d.promise();
         }
 
