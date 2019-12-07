@@ -189,7 +189,10 @@ class Wargear(Base):
     )
 
     def __str__(self):
-        return self.name
+        if self.profile:
+            return f'{self.name} {self.profile}'
+        else:
+            return self.name
 
 class Keyword(Base):
     __tablename__ = 'keyword'
