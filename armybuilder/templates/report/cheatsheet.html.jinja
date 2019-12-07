@@ -1,5 +1,16 @@
 {% extends "report/base.html.jinja" %}
 {% block content %}
+<h2 class="cheatsheet-subfaction-label">Subfaction Ability</h2>
+<div class="cheatsheet-subfaction-container">
+    {% for faction in roster.factions %}
+        {% if faction.abilities|length != 0 %}
+            {% for ability in faction.abilities %}
+                <p><b>{{ability.name}}</b>: {{ability.text}}</p>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+</div>
+
 <h2 class="tactic-label"> {{ "Common Tactics" }}</h2>
 <div class="tactics-container common">
     {% for c_tac in common_tactics %}

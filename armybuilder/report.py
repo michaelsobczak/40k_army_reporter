@@ -50,6 +50,7 @@ def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
 
     document_context_map = {
         'cheatsheet': {
+            'roster' : roster,
             'common_tactics' : common_tactics,
             'faction_tactics' : faction_tactics,
             'specialist_tactics' : specialist_tactics,
