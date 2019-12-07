@@ -61,11 +61,11 @@ th {
 .data-card-abilities {
   background-color: gainsboro;
   padding: 0.5%;
-  font-size: 0.5vw;
+  font-size: 0.77vw;
 }
 
 .data-card-specialization {
-  font-size: 0.5vw;
+  font-size: 0.75vw;
 }
 
 .data-card-container {
@@ -82,7 +82,7 @@ th {
     padding: 1%;
     position: relative;
     margin: 0.5%;
-    font-size: 0.5vw;
+    font-size: 0.75vw;
 }
 
 .data-card-table {
@@ -95,7 +95,7 @@ th {
 }
 
 .data-card-weapon-ability-field {
-  font-size: 0.5vh;
+  font-size: 1.75vh;
 }
 
 .points-text {
