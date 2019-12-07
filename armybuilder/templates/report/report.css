@@ -74,6 +74,7 @@ th {
   display: grid;
   grid-template-columns: repeat(2,3.5in);
   grid-template-rows: auto;
+  width: 50%;
 
 }
 .data-card-div {
