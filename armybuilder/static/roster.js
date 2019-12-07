@@ -38,6 +38,7 @@ RelationshipSelectField.prototype = new jsGrid.SelectField({
                         .addClass(this.name + '-select-field chosen-select')
                         .attr('id', sel_id);
         var self = this;
+        sel.append($("<option>").attr("value", "").text(""));
         $.get(this.url, null, function(data, textStatus, jqXHR ) {
             
             $(data['objects']).each(function() {
@@ -49,7 +50,7 @@ RelationshipSelectField.prototype = new jsGrid.SelectField({
             if (value) {
                 sel.val(value);
             }
-            sel.chosen();
+            sel.chosen({"allow_single_deselect": true});
         });
         this.editControl = sel;
         return sel;
@@ -62,6 +63,7 @@ RelationshipSelectField.prototype = new jsGrid.SelectField({
                         .addClass(this.name + '-select-field chosen-select')
                         .attr('id', sel_id);
         var self = this;
+        sel.append($("<option>").attr("value", "").text(""));
         $.get(this.url, null, function(data, textStatus, jqXHR ) {
             $(data['objects']).each(function() {
                 sel.append($("<option>").attr('value',this.id).text(self.relationshipObjStr(this)));
