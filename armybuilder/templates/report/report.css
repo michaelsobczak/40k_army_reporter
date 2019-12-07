@@ -1,4 +1,4 @@
-@media print { .tactics-cell { page-break-inside: avoid; break-inside: avoid; } }
+/* @media print { .tactics-cell { page-break-inside: avoid; break-inside: avoid; } }
 @media print  
 {
     .data-card-div {
@@ -13,7 +13,7 @@
       page-break-before: always;
     }
 }
-@page { size: auto;  margin: 0.5in 0.5in 0.5in 0.5in; }
+@page { size: auto;  margin: 0.5in 0.5in 0.5in 0.5in; } */
 
 td {
   text-align: center;
@@ -70,11 +70,11 @@ th {
 
 .data-card-container {
   /* width: 8.5in; */
-  margin: auto;
+  /* margin: auto; */
   display: grid;
   grid-template-columns: repeat(2,3.5in);
   grid-template-rows: auto;
-  width: 50%;
+  /* width: 50%; */
 
 }
 .data-card-div {
