@@ -15,6 +15,9 @@ flask-restless = "*"
 flask-admin = "*"
 flask-login = "*"
 flask-wtf = "*"
+scikit-learn = "*"
+pandas = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.8"
