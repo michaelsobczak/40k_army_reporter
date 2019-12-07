@@ -18,10 +18,10 @@
 td {
   text-align: center;
   background-color: beige;
-  font-size: 0.5vw;
+  font-size: 0.75vw;
 }
 th {
-  font-size: 0.5vw;
+  font-size: 0.75vw;
 }
 .roster-container {
   margin: 0 auto;
@@ -74,6 +74,7 @@ th {
   display: grid;
   grid-template-columns: repeat(2,3.5in);
   grid-template-rows: auto;
+  width: 50%;
 
 }
 .data-card-div {
