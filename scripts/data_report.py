@@ -7,7 +7,7 @@ from sklearn.decomposition import PCA
 import pandas as pd
 from armybuilder import db
 from armybuilder.models import *
-from armybuilder.analytics.featurize import featurize_figures
+from armybuilder.analytics.featurize import featurize_figures, featurize_wargear
 
 def mk_csv(filename, headers, data):
 
@@ -68,24 +68,34 @@ def main(argv):
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
 
-    fig_feat_path = os.path.join(args.output_dir, 'features.csv')
-    fig_pca_path = os.path.join(args.output_dir, 'pca.png')
+    fig_feat_path = os.path.join(args.output_dir, 'figure_features.csv')
+    fig_pca_path = os.path.join(args.output_dir, 'figure_pca.png')
     mk_csv(fig_feat_path, headers, feats)
     generate_pca(
         csv_path=fig_feat_path, 
         output_path=fig_pca_path,
         labels=labels, 
-        features=headers, show=True)
+        features=headers, show=args.show)
 
-    def parse_wargear_type(w):
-        wt = w.wargear_type
-        val_rev, t_rev = reversed(wt).split(' ')
-        t = reversed(t_rev)
-        val = clean_numeric(reversed(val_rev))
-        return t
-    
-    headers, labels, feats = featurize_wargear(wargear, parse_wargear_type)
+    # def parse_wargear_type(w):
+    #     wt = w.wargear_type
+    #     tokens = wt.split(' ')
+    #     weapon_type = ' '.join(tokens[:-1])
+    #     weapon_num = tokens[-1]
+    #     return weapon_type
 
+    # wargear = db.session.query(Wargear).all()
+    # headers, labels, feats = featurize_wargear(wargear, parse_wargear_type)
+    # wargear_feat_path = os.path.join(args.output_dir, 'wargear_features.csv')
+    # wargear_pca_path = os.path.join(args.output_dir, 'wargear_pca.png')
+    # mk_csv(wargear_feat_path, headers, feats)
+    # generate_pca(
+    #     csv_path=wargear_feat_path,
+    #     output_path=wargear_pca_path,
+    #     labels=labels,
+    #     features=headers, show=args.show
+    # )
+    return 0
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

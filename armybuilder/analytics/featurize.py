@@ -63,7 +63,6 @@ def featurize_figures(figures: Iterable[Figure], target_attr_func):
 
 def featurize_wargear(wargear: Iterable[Wargear], target_attr_func):
     numeric_features = [
-        'name',
         'profile',
         'wargear_range',
         'strength',
