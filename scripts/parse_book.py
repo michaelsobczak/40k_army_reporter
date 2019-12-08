@@ -12,7 +12,7 @@ TACTIC_REGEX = r'(?P<name>[^a-z]+)\n\n(?P<faction>([ ]|\S)+) Tactic\n(?P<text>([
 #WARGEAR_REGEX = r'(?P<name>([ ]|[\S]+)+) (?P<range>([0-9]+"|Melee)) (?P<stats>([ ]|\S)+)'
 WARGEAR_REGEX = r'(?P<name>(?:[ ]|\S)*) (?P<range>([0-9]+"|Melee)) (?P<stats>([ ]|\S)+)\n'
 WARGEAR_STAT_REGEX = r'(?P<wargear_type>[a-zA-Z 0-9*]*) (?P<strength>(?:User|[\-+x0-9*]+)) (?P<ap>[\-+x0-9*]+) (?P<damage>[D0-9*\-]+)(?P<ability>[\S\- ]*)'
-PROFILED_WARGEAR_REGEX = r'(?P<name>[\S \-]+)( When attacking with this weapon, choose[\S ]+[.]+\n)(?P<profiles>(?P<profilename>[- ]|\S)+ (?P<range>([0-9]+"|Melee)) (?P<wargear_type>[a-zA-Z 0-9*]*) (?P<strength>(?:User|[\-+x0-9*]+)) (?P<ap>[\-+x0-9*]+) (?P<damage>[D0-9*\-]+)(?P<ability>[\S\- ]*)\n\n)+'
+PROFILED_WARGEAR_REGEX = r'(?P<name>[\S \-]+) (?P<rules>(?:When|This)[ \S]+)\n((- [\S ]+\n|\n))+'
 _DB_ADD_RECORD = defaultdict(int)
 
 def add_obj(obj: Base):
@@ -168,7 +168,41 @@ def extract_tactics(corpus: str):
     tactics = [parse_tactic(mg, matchstr) for mg, matchstr in tactic_string_match_groups]
 
 def parse_profiled_wargear(mg, s):
-    breakpoint()
+    lines = [ l.strip() for l in s.strip().split('\n') if len(l.strip()) > 0 ]
+
+    z = re.compile(WARGEAR_REGEX)
+
+    search_text = '\n'.join([ x.replace('- ', '') for x in lines ])
+    profile_matches = [(m.groupdict(), m.string[m.start(0):m.end(0)]) for m in z.finditer(search_text)]
+    profile_matches = [y for y in profile_matches if y]
+    if len(profile_matches) < 1:
+        return None
+
+    w = Wargear(
+        name=mg['name'].strip().title(),
+        text=mg['rules'].strip()
+    )
+    add_obj(w)
+    for gd, st in profile_matches:
+        md = clean_wargear_match_dict(gd)
+        stats = parse_wargear_stats(md['stats'])
+        new_profile = WargearProfile(
+            name='',
+            wargear_id=w.id,
+            wargear_range=md['range'].strip(),
+            wargear_type=stats['wargear_type'].strip(),
+            strength=stats['strength'].strip(),
+            ap=stats['ap'].strip(),
+            damage=stats['damage'].strip(),
+        )
+        ab_text = stats['ability'].strip()
+        if len(ab_text) > 4:
+            wargear_ability = get_or_create_ability(name=md['name'], text=ab_text)
+            new_profile.abilities = [wargear_ability]
+        add_obj(new_profile)
+    
+    return w, mg['name'].strip()
+
 
 
 def extract_wargear(corpus:str):
@@ -177,7 +211,10 @@ def extract_wargear(corpus:str):
     wargear_string_match_groups = [(m.groupdict(), m.string[m.start(0):m.end(0)]) for m in r.finditer(corpus)]
     profiled_wargear_string_match_groups = [(m.groupdict(), m.string[m.start(0):m.end(0)]) for m in q.finditer(corpus)]
     wargear = [parse_wargear(mg, matchstr) for mg, matchstr in wargear_string_match_groups]
+    wargear = [b for b in wargear if b]
     profiled_wargear = [parse_profiled_wargear(mg, matchstr) for mg, matchstr in profiled_wargear_string_match_groups]
+    profiled_wargear = [x for x in profiled_wargear if x]
+    print(f'Found {len(wargear)} normal wargear items and {len(profiled_wargear)} wargear items with profiles')
     wargear_origname_tuples = [w for w in wargear + profiled_wargear if w]
 
     # find the point costs
@@ -187,11 +224,10 @@ def extract_wargear(corpus:str):
         if not wg_cost_matches:
             print(f'no cost for {wg.name} found')
             continue
-        if len(wg_cost_matches) > 1:
-            print(f'found multiple costs for {wg.name}: {wg_cost_matches}')
+        # if len(wg_cost_matches) > 1:
+        #     print(f'found multiple costs for {wg.name}: {wg_cost_matches}')
         wg.points = int(wg_cost_matches[0])
     db.session.commit()
-    print(f'Found {len(wargear)} wargear...')
 
 
 def parse_book(corpus: str):
