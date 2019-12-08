@@ -61,6 +61,7 @@ roster_faction_table = make_secondary_table('roster', 'faction')
 user_roster_table = make_secondary_table('user', 'roster')
 user_role_table = make_secondary_table('user', 'role')
 figure_specialization_table = make_secondary_table('figure', 'specialization')
+wargearprofile_ability_table = make_secondary_table('wargearprofile', 'ability')
 class User(UserMixin, Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
@@ -159,13 +160,9 @@ class Wargear(Base):
     __tablename__ = 'wargear'
     id = Column(Integer, primary_key=True)
     name = Column(Text)
-    profile = Column(Text)
-    wargear_range = Column(Text)
-    wargear_type = Column(Text)
-    strength = Column(Text)
-    ap = Column(Text)
-    damage = Column(Text)
     points = Column(Integer)
+
+    profiles = relationship('WargearProfile')
 
     figures = relationship(
         'Figure',
@@ -193,6 +190,23 @@ class Wargear(Base):
             return f'{self.name} {self.profile}'
         else:
             return self.name
+
+class WargearProfile(Base):
+    __tablename__ = 'wargearprofile'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text)
+    wargear_id = Column(Integer, ForeignKey('wargear.id'))
+    wargear = relationship('Wargear')
+    wargear_range = Column(Text)
+    wargear_type = Column(Text)
+    strength = Column(Text)
+    ap = Column(Text)
+    damage = Column(Text)
+
+    abilities = relationship('Ability', secondary=wargearprofile_ability_table, lazy='subquery')
+
+    def __str__(self):
+        return f'{self.name} {self.wargear_range} {self.wargear_type} {self.strength} {self.ap} {self.damage}'
 
 class Keyword(Base):
     __tablename__ = 'keyword'

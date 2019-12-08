@@ -3,7 +3,7 @@ from armybuilder.models import *
 from sqlalchemy.sql.expression import func
 import os, sys
 import argparse
-from typing import Dict
+from typing import Dict, Union
 from collections import defaultdict
 import json
 import re
@@ -11,7 +11,7 @@ import re
 TACTIC_REGEX = r'(?P<name>[^a-z]+)\n\n(?P<faction>([ ]|\S)+) Tactic\n(?P<text>([.]|.|(\n[^\n]))*)\n{2}(?P<cost>[0-9]+).*'
 #WARGEAR_REGEX = r'(?P<name>([ ]|[\S]+)+) (?P<range>([0-9]+"|Melee)) (?P<stats>([ ]|\S)+)'
 WARGEAR_REGEX = r'(?P<name>(?:[ ]|\S)*) (?P<range>([0-9]+"|Melee)) (?P<stats>([ ]|\S)+)\n'
-WARGEAR_STAT_REGEX = r'(?<wargear_type>[A-Z][a-zA-Z 0-9*]+) (?<strength>(?:User|[\-+x0-9*]+)) (?<ap>[\-+x0-9*]+) (?<damage>[D0-9*\-]+)(?<ability>[\S\- ]*)\n'
+WARGEAR_STAT_REGEX = r'(?P<wargear_type>[a-zA-Z 0-9*]*) (?P<strength>(?:User|[\-+x0-9*]+)) (?P<ap>[\-+x0-9*]+) (?P<damage>[D0-9*\-]+)(?P<ability>[\S\- ]*)'
 _DB_ADD_RECORD = defaultdict(int)
 
 def add_obj(obj: Base):
@@ -56,6 +56,13 @@ def get_or_create_specialization(name: str) -> Specialization:
         add_obj(spec)
     return spec
 
+def get_or_create_ability(name: str, text: str) -> Ability:
+    n = name.strip().title()
+    ab = db.session.query(Ability).filter_by(name=n).first()
+    if not ab:
+        ab = Ability(name=n, text=text)
+        add_obj(ab)
+    return ab
 
 def parse_tactic(match_dict: Dict[str, str], matchstr: str) -> Tactic:
     """ expecting keys to match group names of TACTIC_REGEX above """
@@ -83,35 +90,74 @@ def parse_tactic(match_dict: Dict[str, str], matchstr: str) -> Tactic:
 
 
 def clean_wargear_match_dict(match_dict: Dict[str, str]) -> Dict[str, str]:
-    clean_dict = {}
-    if match_dict['name'].endswith('Melee'):
+    clean_dict = {
+        'name': match_dict['name']
+    }
+    if 'Melee' in match_dict['name']:
         clean_stats = 'Melee ' + match_dict['stats'].strip()
-        if not (clean_stats.endswith('.') or clean_stats.endswith('-')):
-            clean_stats = clean_stats + ' -'
-        clean_stats = clean_stats.replace('  ', ' ')
-        clean_dict['stats'] = clean_stats
         clean_dict['name'] = match_dict['name'].replace('Melee', '').strip()
-    else:
-        clean_dict['stats'] = match_dict['stats'].strip()
-        clean_dict['name'] = match_dict['name'].strip()
+    
+    clean_stats = match_dict['stats'].strip()
+    if not (clean_stats.endswith('.') or clean_stats.endswith('-')):
+        clean_stats = clean_stats + ' -'
+        clean_stats = clean_stats.replace('  ', ' ')
+    
+    if clean_stats.startswith('User'):
+        clean_stats = 'Melee ' + clean_stats
+
+    clean_dict['stats'] = clean_stats
     clean_dict['range'] = match_dict['range'].strip()
     return clean_dict
 
+def swith(s, vals):
+    return any([s.startswith(v) for v in vals])
+
 def parse_wargear_stats(stats_str: str) -> Dict[str, str]:
-    if stats_str.startswith('of') or stats_str.startswith('from'):
+    if swith(stats_str, ['or', 'you', 'of', ' '] + [str(s) for s in range(10)]):
         return None
+
+    if stats_str.count(' ') < 5:
+        return None
+
     r = re.compile(WARGEAR_STAT_REGEX)
-    m = r.match(stats_str)
-    gd = m.groupdict()
-    return gd
+    match_tuples = [(m.groupdict(), m.string[m.start(0):m.end(0)]) for m in r.finditer(stats_str)]
+    if not match_tuples:
+        return None
+    
+    return match_tuples[0][0]
 
 
-def parse_wargear(match_dict: Dict[str, str], matchstr: str) -> Wargear:
+def parse_wargear(match_dict: Dict[str, str], matchstr: str) -> Union[Wargear, str]:
     md = clean_wargear_match_dict(match_dict)
     stats = parse_wargear_stats(md['stats'])
     if not stats:
         log_failure('wargear', 'stats string starting with "of"', matchstr, md)
         return None
+    
+    if md['name'].strip().startswith('- '):
+        log_failure('wargear', 'wargear name indicates it is a profile', matchstr, md)
+        return None
+
+    
+    new_wargear = Wargear(
+        name=md['name']
+    )
+    add_obj(new_wargear)
+    new_profile = WargearProfile(
+        name='',
+        wargear_id=new_wargear.id,
+        wargear_range=match_dict['range'].strip(),
+        wargear_type=stats['wargear_type'].strip(),
+        strength=stats['strength'].strip(),
+        ap=stats['ap'].strip(),
+        damage=stats['damage'].strip(),
+    )
+    ab_text = stats['ability'].strip()
+    if len(ab_text) > 4:
+        wargear_ability = get_or_create_ability(name=md['name'], text=ab_text)
+        new_profile.abilities = [wargear_ability]
+    add_obj(new_profile)
+    return new_wargear, match_dict['name'].replace('Melee', '').strip()
     
 
 def extract_tactics(corpus: str):
@@ -125,8 +171,20 @@ def extract_wargear(corpus:str):
     r = re.compile(WARGEAR_REGEX)
     wargear_string_match_groups = [(m.groupdict(), m.string[m.start(0):m.end(0)]) for m in r.finditer(corpus)]
     wargear = [parse_wargear(mg, matchstr) for mg, matchstr in wargear_string_match_groups]
-    wargear = [w for w in wargear if w]
-    print(f'Found {len(wargear_string_match_groups)} wargear...')
+    wargear_origname_tuples = [w for w in wargear if w]
+
+    # find the point costs
+    for wg, origname in wargear_origname_tuples:
+        wg_cost_regex = re.compile(f'{origname} ([0-9]+)\n')
+        wg_cost_matches = [ m.string[m.start(1):m.end(1)] for m in wg_cost_regex.finditer(corpus)]
+        if not wg_cost_matches:
+            print(f'no cost for {wg.name} found')
+            continue
+        if len(wg_cost_matches) > 1:
+            print(f'found multiple costs for {wg.name}: {wg_cost_matches}')
+        wg.points = int(wg_cost_matches[0])
+    db.session.commit()
+    print(f'Found {len(wargear)} wargear...')
 
 
 def parse_book(corpus: str):
@@ -149,8 +207,10 @@ def main(argv):
 
     parse_book(text)
 
-    from pprint import pprint
-    pprint(_DB_ADD_RECORD)
+    print('Parsing report:')
+    for k, v in _DB_ADD_RECORD.items():
+        s = str(k).replace("<class 'armybuilder.models.", "").replace("'>", "")
+        print(f'\tadded {v} {s} items')
 
 
 
