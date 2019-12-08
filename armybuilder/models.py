@@ -161,6 +161,7 @@ class Wargear(Base):
     id = Column(Integer, primary_key=True)
     name = Column(Text)
     points = Column(Integer)
+    text = Column(Text)
 
     profiles = relationship('WargearProfile')
 
