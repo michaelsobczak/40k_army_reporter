@@ -1,5 +1,5 @@
 load database  
-    from 'armybuilder/.db/db.sqlite'  
+    from '../armybuilder/.db/db.sqlite'  
     into postgresql://localhost:5432/armybuilder
 
 with include drop, create tables, create indexes, reset sequences  
