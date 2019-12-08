@@ -14,7 +14,9 @@
     }
 }
 @page { size: auto;  margin: 0.5in 0.5in 0.5in 0.5in; } */
-
+table, tr, td, th, tbody, thead, tfoot {
+  page-break-inside: avoid !important;
+}
 td {
   text-align: center;
   background-color: beige;
@@ -83,6 +85,8 @@ th {
     position: relative;
     margin: 0.5%;
     font-size: 0.75vw;
+    page-break-inside: avoid;
+
 }
 
 .data-card-table {
@@ -119,6 +123,8 @@ h2.tactic_label {
   margin: 0.5%;
   break-after: avoid-page;
   border-style: solid;
+  page-break-inside: avoid;
+
 }
 
 
