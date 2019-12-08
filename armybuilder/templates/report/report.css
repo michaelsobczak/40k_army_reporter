@@ -16,7 +16,10 @@
 @page { size: auto;  margin: 0.5in 0.5in 0.5in 0.5in; } */
 table, tr, td, th, tbody, thead, tfoot {
   page-break-inside: avoid !important;
+  font-family: warnock-pro,serif;
+
 }
+
 td {
   text-align: center;
   background-color: beige;

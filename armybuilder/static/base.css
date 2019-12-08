@@ -3,6 +3,10 @@
     z-index: 10000 !important;
 }
 .chosen-container.chosen-container-multi {
-    width: 100% !important; /* or any value that fits your needs */
+    /* width: 100% !important; or any value that fits your needs */
     z-index: 10000 !important;
+}
+
+td {
+    background-color: cornsilk !important;
 }
