@@ -242,8 +242,8 @@ class Specialization(Base):
     __tablename__ = 'specialization'
     id = Column(Integer, primary_key=True)
     name = Column(Text)
-
-    tactics = relationship('Tactic')
+    tactic_id = Column(Integer, ForeignKey('tactic.id'))
+    tactic = relationship('Tactic')
     passive = Column(Text)
 
     figures = relationship('Figure', secondary=figure_specialization_table, back_populates='allowed_specializations', lazy='subquery')
@@ -256,7 +256,6 @@ class Tactic(Base):
     name = Column(Text)
     cost = Column(Integer)
     text = Column(Text)
-    level = Column(Integer)
     
 
     keyword_id = Column(Integer, ForeignKey('keyword.id'))
@@ -266,7 +265,7 @@ class Tactic(Base):
         secondary=tactic_faction_table,
         back_populates='tactics')
 
-    specialization_id = Column(Integer, ForeignKey('specialization.id'))
+
     specialization = relationship('Specialization')
 
     def __str__(self):
