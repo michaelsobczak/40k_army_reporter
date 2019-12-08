@@ -2,6 +2,7 @@ from flask import render_template
 from typing import Dict, Any
 from sqlalchemy.sql.expression import func
 import os
+import pdfkit
 from . import app,db
 from .models import *
 
@@ -74,6 +75,11 @@ def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
             report_html_string = render_report_template(template_name, ctx)
             report_outfile.write(report_html_string)
             report_data[report] = report_html_string
+            download_pdf = False
+            if download_pdf:
+                print(report_html_string, template_name)
+                pdfkit.from_string(report_html_string, f'{report}.pdf')
+            
     return report_data
 
     
