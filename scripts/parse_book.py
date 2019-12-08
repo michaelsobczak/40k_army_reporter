@@ -12,6 +12,7 @@ TACTIC_REGEX = r'(?P<name>[^a-z]+)\n\n(?P<faction>([ ]|\S)+) Tactic\n(?P<text>([
 #WARGEAR_REGEX = r'(?P<name>([ ]|[\S]+)+) (?P<range>([0-9]+"|Melee)) (?P<stats>([ ]|\S)+)'
 WARGEAR_REGEX = r'(?P<name>(?:[ ]|\S)*) (?P<range>([0-9]+"|Melee)) (?P<stats>([ ]|\S)+)\n'
 WARGEAR_STAT_REGEX = r'(?P<wargear_type>[a-zA-Z 0-9*]*) (?P<strength>(?:User|[\-+x0-9*]+)) (?P<ap>[\-+x0-9*]+) (?P<damage>[D0-9*\-]+)(?P<ability>[\S\- ]*)'
+PROFILED_WARGEAR_REGEX = r'(?P<name>[\S \-]+)( When attacking with this weapon, choose[\S ]+[.]+\n)(?P<profiles>(?P<profilename>[- ]|\S)+ (?P<range>([0-9]+"|Melee)) (?P<wargear_type>[a-zA-Z 0-9*]*) (?P<strength>(?:User|[\-+x0-9*]+)) (?P<ap>[\-+x0-9*]+) (?P<damage>[D0-9*\-]+)(?P<ability>[\S\- ]*)\n\n)+'
 _DB_ADD_RECORD = defaultdict(int)
 
 def add_obj(obj: Base):
@@ -166,12 +167,18 @@ def extract_tactics(corpus: str):
     print(f'Found {len(tactic_string_match_groups)} tactics...')
     tactics = [parse_tactic(mg, matchstr) for mg, matchstr in tactic_string_match_groups]
 
+def parse_profiled_wargear(mg, s):
+    breakpoint()
+
 
 def extract_wargear(corpus:str):
     r = re.compile(WARGEAR_REGEX)
+    q = re.compile(PROFILED_WARGEAR_REGEX)
     wargear_string_match_groups = [(m.groupdict(), m.string[m.start(0):m.end(0)]) for m in r.finditer(corpus)]
+    profiled_wargear_string_match_groups = [(m.groupdict(), m.string[m.start(0):m.end(0)]) for m in q.finditer(corpus)]
     wargear = [parse_wargear(mg, matchstr) for mg, matchstr in wargear_string_match_groups]
-    wargear_origname_tuples = [w for w in wargear if w]
+    profiled_wargear = [parse_profiled_wargear(mg, matchstr) for mg, matchstr in profiled_wargear_string_match_groups]
+    wargear_origname_tuples = [w for w in wargear + profiled_wargear if w]
 
     # find the point costs
     for wg, origname in wargear_origname_tuples:
