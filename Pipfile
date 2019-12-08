@@ -18,6 +18,7 @@ flask-wtf = "*"
 scikit-learn = "*"
 pandas = "*"
 matplotlib = "*"
+pdfkit = "*"
 
 [requires]
 python_version = "3.8"
