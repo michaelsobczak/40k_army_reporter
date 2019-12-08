@@ -5,7 +5,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager
 import flask_restless
 import os
-from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry, Faction, User, Role, WargearProfile
+from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry, Faction, User, Role, WargearProfile, FigureProfile
 
 app = Flask(__name__)
 
@@ -51,8 +51,8 @@ class UserView(ArmybuilderModelView):
     column_editable_list = ['username', 'email', 'roles', 'rosters']
 
 class FigureView(ArmybuilderModelView):
-    column_list = ['figure_type', 'figure_name', 'move', 'weapon_skill', 'ballistic_skill', 'strength', 'toughness', 'wounds', 'attacks', 'leadership', 'save', 'max_number', 'allowed_wargear', 'allowed_specializations', 'factions', 'keywords','abilities', 'points']
-    column_editable_list = ['figure_type', 'figure_name', 'move', 'weapon_skill', 'ballistic_skill', 'strength', 'toughness', 'wounds', 'attacks', 'leadership', 'save', 'max_number', 'allowed_wargear', 'allowed_specializations', 'factions', 'keywords','abilities', 'points']
+    column_list = ['name', 'default_wargear', 'specializations', 'factions', 'keywords','abilities', 'profiles']
+    column_editable_list = ['name', 'default_wargear', 'specializations', 'factions', 'keywords','abilities', 'profiles']
 
 class WargearProfileView(ArmybuilderModelView):
     column_list = ['name', 'wargear_range', 'wargear_type', 'strength', 'ap', 'damage', 'wargear', 'abilities']
@@ -79,6 +79,7 @@ def init_app():
     admin.add_view(UserView(User, db.session, category='User'))
     admin.add_view(ArmybuilderModelView(Role, db.session, category='User'))
     admin.add_view(WargearProfileView(WargearProfile, db.session, category='Pieces'))
+    admin.add_view(ArmybuilderModelView(FigureProfile, db.session, category='Pieces'))
 
     manager = flask_restless.APIManager(app, session=db.session)
     manager.create_api(Roster, include_methods=['points'], methods=['GET', 'POST', 'PUT', 'DELETE'])
