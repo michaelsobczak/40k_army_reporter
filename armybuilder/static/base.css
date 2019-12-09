@@ -1,3 +1,18 @@
+:root {
+    --dark-grey: #212626;
+    --light-grey: #D9D9D9;
+    --mid-grey: #736A63;
+    --war-orange: #bf471b;
+    --dark-brown: #59220E;
+}
+
+/* font-family: 'Libre Barcode 39 Text', cursive;
+font-family: 'Codystar', cursive;
+font-family: 'Averia Serif Libre', cursive;
+font-family: 'Jolly Lodger', cursive;
+font-family: 'Londrina Shadow', cursive;
+font-family: 'Baumans', cursive;
+font-family: 'Varela Round', sans-serif; */
 .chosen-container.chosen-container-single {
     width: 100% !important; /* or any value that fits your needs */
     z-index: 10000 !important;
@@ -7,6 +22,70 @@
     z-index: 10000 !important;
 }
 
+.chosen-default {
+    width: 300px !important;
+}
 td {
     background-color: cornsilk !important;
+}
+
+.container {
+    margin: 0;
+    max-width: revert;
+    padding: 0;
+}
+
+.navbar {
+    position: relative;
+    background-color: var(--war-orange) !important;
+}
+
+.splasher-container {
+    height: 96vh;
+    padding: 0;
+    background-color: var(--war-orange);
+    
+
+}
+
+.title-container {
+    /* height: 30%;
+    margin: auto;
+    width: 50%; */
+    /* background-color: var(--war-orange); */
+}
+
+.logo {
+    /* background-color: var(--mid-grey); */
+    width: 50vh;
+    height: 50vh;
+    margin: auto;
+    color: var(--war-orange);
+    font-family: 'Averia Serif Libre', cursive;
+    font-size: 60pt;
+    text-shadow: -2px -2px 0 #FFF, 2px -2px 0 #FFF, -2px 2px 0 #FFF, 2px 2px 0 #FFF;
+}
+
+.one-sentence-container {
+    color: floralwhite;
+    font-size: 30pt;
+    
+}
+/* font-family: 'Libre Barcode 39 Text', cursive;
+font-family: 'Codystar', cursive;
+font-family: 'Averia Serif Libre', cursive;
+font-family: 'Jolly Lodger', cursive;
+font-family: 'Londrina Shadow', cursive;
+font-family: 'Baumans', cursive;
+font-family: 'Varela Round', sans-serif; */
+
+.splash-card {
+    background-color: floralwhite;
+    box-shadow: #212626 1px 1px;
+    /* border-style: solid; */
+    border-radius: 6pt;
+    height: 20vh;
+    font-family: 'Jolly Lodger', cursive;
+    color: #bf471b;
+    /* font-size: 20pt; */
 }
