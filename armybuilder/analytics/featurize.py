@@ -27,12 +27,7 @@ def clean_numeric(val: str) -> int:
         traceback.print_exc()
         return INVALID_VAL
 
-def featurize_figures(figures: Iterable[Figure], target_attr_func):
-
-    string_features = [
-        'figure_type',
-        'figure_name'
-    ]
+def featurize_figure_profiles(figures: Iterable[FigureProfile], target_attr_func):
     numeric_features = [
         'points',
         'move',

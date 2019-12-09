@@ -7,7 +7,7 @@ from sklearn.decomposition import PCA
 import pandas as pd
 from armybuilder import db
 from armybuilder.models import *
-from armybuilder.analytics.featurize import featurize_figures, featurize_wargear
+from armybuilder.analytics.featurize import featurize_figure_profiles, featurize_wargear
 
 def mk_csv(filename, headers, data):
 
@@ -37,15 +37,15 @@ def generate_pca(csv_path: str, output_path: str, labels: list, features: list, 
     ax.set_xlabel('Principal Component 1', fontsize = 15)
     ax.set_ylabel('Principal Component 2', fontsize = 15)
     ax.set_title('2 component PCA', fontsize = 20)
+    print(f'labels: {labels}')
     targets = labels
     colors = ['r', 'g', 'b', 'c', 'm', 'y', 'k', 'w']
-    for target, color in zip(targets,colors):
+    for target in targets:
         indicesToKeep = finalDf['target'] == target
         px = finalDf.loc[indicesToKeep, 'principal component 1']
         py = finalDf.loc[indicesToKeep, 'principal component 2']
         ax.scatter(px
                 , py
-                , c = color
                 ) #, s = 50)
     ax.legend(targets)
     ax.grid()
@@ -54,16 +54,21 @@ def generate_pca(csv_path: str, output_path: str, labels: list, features: list, 
         plt.show()
 
 def main(argv):
+    def get_faction_label(fp) -> str:
+        return fp.figure.factions[0].name
+
+    figure_profiles = db.session.query(FigureProfile).all()
+    headers, labels, feats = featurize_figure_profiles(figure_profiles, get_faction_label)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--output-dir', help='path to output generated', default=os.path.join(os.getcwd(), 'output'))
+    parser.add_argument('--labels', nargs='*', default='all', choices=['all'] + list(labels))
     parser.add_argument('--show', action='store_true', help='show plots', default=False)
+
     args = parser.parse_args(argv)
 
-    def get_faction_label(fig) -> str:
-        return fig.factions[0].name if fig.factions else ''
-
-    figures = db.session.query(Figure).all()
-    headers, labels, feats = featurize_figures(figures, get_faction_label)
+    if 'all' in args.labels:
+        args.labels = labels
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
@@ -74,7 +79,7 @@ def main(argv):
     generate_pca(
         csv_path=fig_feat_path, 
         output_path=fig_pca_path,
-        labels=labels, 
+        labels=args.labels, 
         features=headers, show=args.show)
 
     # def parse_wargear_type(w):
