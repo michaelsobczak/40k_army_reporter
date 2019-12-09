@@ -15,6 +15,8 @@ WARGEAR_STAT_REGEX = r'(?P<wargear_type>[a-zA-Z 0-9*]*) (?P<strength>(?:User|[\-
 PROFILED_WARGEAR_REGEX = r'(?P<name>[\S \-]+) (?P<rules>(?:When|This)[ \S]+)\n((- [\S ]+\n|\n))+'
 _DB_ADD_RECORD = defaultdict(int)
 
+#FIGURE_REGEX = r"\n(?P<name>[A-Z' ]+)[\n]+NAME M WS BS S T W A Ld Sv Max\n(?P<profiles>(\n|([ \S]+) (?P<range>[0-9]+\") (?P<stats>[ \S]+))+)\n+(?P<default_wargear>This[ \S]+\.\n)(?P<profile_info>[^.]+)\.\nWARGEAR OPTIONS(?P<wargear_options>(?:\n|[^A][^B][^I][\S ]+\n)*)ABILITIES(?P<abilities>(?:\n|[^S][^P][^E][^C][^I][\S ]+\n)+)SPECIALISTS (?P<specialist_info>[\S ]+)\n\nFACTION KEYWORD (?P<faction_keyword>[A-Z ]+)\nKEYWORDS (?P<keywords>[A-Z 0-9,]+\n)"
+FIGURE_REGEX = r"\n(?P<name>[A-Z' ]+)[\n]+NAME M WS BS S T W A Ld Sv Max\n(?P<profiles>(\n|([ \S]+) (?P<range>[0-9]+\") (?P<stats>[ \S]+))+)\n+(?P<stuff>(\n|[^K][^E][^Y][^W][\S ]+\n)*)KEYWORDS (?P<keywords>[\S ]+\n)"
 def add_obj(obj: Base):
     db.session.add(obj)
     db.session.commit()
@@ -230,9 +232,42 @@ def extract_wargear(corpus:str):
     db.session.commit()
 
 
+def extract_corpus(regex: str, corpus: str, match_func):
+    r = re.compile(regex)
+    objs = [match_func(m.groupdict(), m.string[m.start(0):m.end(0)]) for m in r.finditer(corpus)]
+    return [o for o in objs if o]
+
+
+def extract_figures(corpus: str):
+    def process_figure(matchdict, matchstring):
+        figure_name = matchdict['name'].strip().title()
+        profile_lines = [ l for l in matchdict['profiles'].strip().split('\n') if l ]
+        keywords = [ get_or_create_keyword(x.strip().title().replace('<', '').replace('>', '')) for x in matchdict['keywords'].strip().split(',') ]
+        i = matchdict['stuff'].index('FACTION KEYWORD ')
+        end = matchdict['stuff'][i:].index('\n')
+        fk = matchdict['stuff'].strip()[i:i+end].replace('FACTION KEYWORD ', '').title()
+        faction = get_or_create_faction(fk)
+        # common_specialist_strings = [ x.strip().title() for x in matchdict['specialist_info'].strip().split(',') if '(' not in x ]
+        # common_specialists = [ get_or_create_specialization(css) for css in common_specialist_strings ]
+
+        f = Figure(
+            name=figure_name,
+            keywords=keywords,
+            factions=[faction],
+            #specializations=common_specialists
+        )
+        add_obj(f)
+
+
+
+
+    extract_corpus(FIGURE_REGEX, corpus, process_figure)
+
+
 def parse_book(corpus: str):
     extract_tactics(corpus)
     extract_wargear(corpus)
+    extract_figures(corpus)
 
 
 def main(argv):
