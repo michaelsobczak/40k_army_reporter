@@ -16,7 +16,13 @@ PROFILED_WARGEAR_REGEX = r'(?P<name>[\S \-]+) (?P<rules>(?:When|This)[ \S]+)\n((
 _DB_ADD_RECORD = defaultdict(int)
 
 #FIGURE_REGEX = r"\n(?P<name>[A-Z' ]+)[\n]+NAME M WS BS S T W A Ld Sv Max\n(?P<profiles>(\n|([ \S]+) (?P<range>[0-9]+\") (?P<stats>[ \S]+))+)\n+(?P<default_wargear>This[ \S]+\.\n)(?P<profile_info>[^.]+)\.\nWARGEAR OPTIONS(?P<wargear_options>(?:\n|[^A][^B][^I][\S ]+\n)*)ABILITIES(?P<abilities>(?:\n|[^S][^P][^E][^C][^I][\S ]+\n)+)SPECIALISTS (?P<specialist_info>[\S ]+)\n\nFACTION KEYWORD (?P<faction_keyword>[A-Z ]+)\nKEYWORDS (?P<keywords>[A-Z 0-9,]+\n)"
-FIGURE_REGEX = r"\n(?P<name>[A-Z' ]+)[\n]+NAME M WS BS S T W A Ld Sv Max\n(?P<profiles>(\n|([ \S]+) (?P<range>[0-9]+\") (?P<stats>[ \S]+))+)\n+(?P<stuff>(\n|[^K][^E][^Y][^W][\S ]+\n)*)KEYWORDS (?P<keywords>[\S ]+\n)"
+#FIGURE_REGEX = r"\n(?P<name>[A-Z' ]+)[\n]+NAME M WS BS S T W A Ld Sv Max\n(?P<profiles>(\n|([ \S]+) (?P<range>[0-9]+\") (?P<stats>[ \S]+))+)\n+(?P<stuff>(\n|[^K][^E][^Y][^W][\S ]+\n)*)KEYWORDS (?P<keywords>[\S ]+\n)"
+FIGURE_REGEX = r"\n(?P<name>[A-Z' ]+)[\n]+NAME M WS BS S T W A Ld Sv Max\n+(?P<stuff>(\n|[^K][^E][^Y][^W][\S ]+\n)*)KEYWORDS (?P<keywords>[\S ]+\n)"
+FIGURE_PROFILE_REGEX = r"(?P<profile>([A-Z][ \S]+ ([0-9]+\"|-) ([ 0-9+\-]+))+)\n+"
+FIGURE_PROFILE_DETAIL_REGEX = r"(?P<name>[A-Z][ \S]+) (?P<move>[0-9]{1,2}\") (?P<weapon_skill>[0-9]\+) (?P<ballistic_skill>[0-9]\+) (?P<strength>[0-9]) (?P<toughness>[0-9]) (?P<wounds>[0-9]) (?P<attacks>[0-9]) (?P<leadership>[0-9]+) (?P<save>[0-9]\+) (?P<max_number>[0-9\-])"
+FIGURE_SPECIALIST_REGEX = r"SPECIALISTS (?P<specialists>[A-Za-z (),]+)\n"
+FIGURE_DEFAULT_WARGEAR_REGEX = r"This model is armed (?P<default_wargear>[ \S]+\.\n)"
+
 def add_obj(obj: Base):
     db.session.add(obj)
     db.session.commit()
@@ -239,16 +245,22 @@ def extract_corpus(regex: str, corpus: str, match_func):
 
 
 def extract_figures(corpus: str):
+
+      
+# FIGURE_PROFILE_DETAIL_REGEX
+        
+
     def process_figure(matchdict, matchstring):
         figure_name = matchdict['name'].strip().title()
-        profile_lines = [ l for l in matchdict['profiles'].strip().split('\n') if l ]
+        # profile_lines = [ l for l in matchdict['profiles'].strip().split('\n') if l ]
         keywords = [ get_or_create_keyword(x.strip().title().replace('<', '').replace('>', '')) for x in matchdict['keywords'].strip().split(',') ]
         i = matchdict['stuff'].index('FACTION KEYWORD ')
         end = matchdict['stuff'][i:].index('\n')
         fk = matchdict['stuff'].strip()[i:i+end].replace('FACTION KEYWORD ', '').title()
         faction = get_or_create_faction(fk)
-        # common_specialist_strings = [ x.strip().title() for x in matchdict['specialist_info'].strip().split(',') if '(' not in x ]
-        # common_specialists = [ get_or_create_specialization(css) for css in common_specialist_strings ]
+
+
+        FIGURE_DEFAULT_WARGEAR_REGEX = r"This model is armed (?P<default_wargear>[ \S]+\.\n)"
 
         f = Figure(
             name=figure_name,
@@ -258,8 +270,27 @@ def extract_figures(corpus: str):
         )
         add_obj(f)
 
+        def process_common_specialists(md, ms):
+            s = md['specialists'].strip()
+            tokens = [ q.strip().title() for q in s.split(',') if ('(' not in q) and (')' not in q) ]
+            f.specializations = [ get_or_create_specialization(css) for css in tokens ]
+            db.session.commit()
 
 
+        extract_corpus(FIGURE_SPECIALIST_REGEX, matchstring, process_common_specialists)
+
+        def process_figure_detail_profile(md, ms):
+            md['figure_id'] = f.id
+            fp = FigureProfile(
+                **md
+            )
+            add_obj(fp)
+
+        def process_figure_profile(md, ms):
+            p = md['profile'].strip()
+            extract_corpus(FIGURE_PROFILE_DETAIL_REGEX, ms, process_figure_detail_profile)
+
+        figure_profiles = extract_corpus(FIGURE_PROFILE_REGEX, matchdict['stuff'], process_figure_profile)
 
     extract_corpus(FIGURE_REGEX, corpus, process_figure)
 

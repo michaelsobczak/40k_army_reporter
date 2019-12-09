@@ -139,7 +139,7 @@ class Figure(Base):
     )
 
     def __str__(self):
-        return f'{self.figure_type if self.figure_type else ""} {self.figure_name if self.figure_name else ""}'
+        return f'{self.name}'
 
     @property
     def displayName(self):
@@ -170,7 +170,7 @@ class FigureProfile(Base):
     max_number = Column(Text)
 
     def __str__(self):
-        return f'{self.name} pts: {self.points}'
+        return f'{self.name}'
 
 class Wargear(Base):
     __tablename__ = 'wargear'
