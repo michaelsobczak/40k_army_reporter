@@ -251,6 +251,9 @@ def extract_figures(corpus: str):
         
 
     def process_figure(matchdict, matchstring):
+        global selected_text
+        selected_text = str(matchstring)
+        
         figure_name = matchdict['name'].strip().title()
         # profile_lines = [ l for l in matchdict['profiles'].strip().split('\n') if l ]
         keywords = [ get_or_create_keyword(x.strip().title().replace('<', '').replace('>', '')) for x in matchdict['keywords'].strip().split(',') ]
@@ -259,7 +262,7 @@ def extract_figures(corpus: str):
         fk = matchdict['stuff'].strip()[i:i+end].replace('FACTION KEYWORD ', '').title()
         faction = get_or_create_faction(fk)
 
-
+        
         FIGURE_DEFAULT_WARGEAR_REGEX = r"This model is armed (?P<default_wargear>[ \S]+\.\n)"
 
         f = Figure(
@@ -275,6 +278,8 @@ def extract_figures(corpus: str):
             tokens = [ q.strip().title() for q in s.split(',') if ('(' not in q) and (')' not in q) ]
             f.specializations = [ get_or_create_specialization(css) for css in tokens ]
             db.session.commit()
+            global selected_text
+            selected_text = selected_text.replace(ms, '')
 
 
         extract_corpus(FIGURE_SPECIALIST_REGEX, matchstring, process_common_specialists)
@@ -285,12 +290,27 @@ def extract_figures(corpus: str):
                 **md
             )
             add_obj(fp)
+            global selected_text
+            selected_text = selected_text.replace(ms, '')
 
         def process_figure_profile(md, ms):
             p = md['profile'].strip()
             extract_corpus(FIGURE_PROFILE_DETAIL_REGEX, ms, process_figure_detail_profile)
+            global selected_text
+            selected_text = selected_text.replace(ms, '')
 
         figure_profiles = extract_corpus(FIGURE_PROFILE_REGEX, matchdict['stuff'], process_figure_profile)
+
+        def process_default_wargear(md, ms):
+            tokens = [ s.replace(',', '').replace('.', '') for s in md['default_wargear'].split(' ') ]
+            for t in tokens:
+                wargear = db.session.query(Wargear).filter(func.lower(Wargear.name) == t.lower()).first()
+                if wargear:
+                    print(f'found default wargear {wargear.name}')
+                    f.default_wargear.append(wargear)
+            db.session.commit()
+
+        extract_corpus(FIGURE_DEFAULT_WARGEAR_REGEX, selected_text, process_default_wargear)
 
     extract_corpus(FIGURE_REGEX, corpus, process_figure)
 
