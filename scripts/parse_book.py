@@ -22,6 +22,7 @@ FIGURE_PROFILE_REGEX = r"(?P<profile>([A-Z][ \S]+ ([0-9]+\"|-) ([ 0-9+\-]+))+)\n
 FIGURE_PROFILE_DETAIL_REGEX = r"(?P<name>[A-Z][ \S]+) (?P<move>[0-9]{1,2}\") (?P<weapon_skill>[0-9]\+) (?P<ballistic_skill>[0-9]\+) (?P<strength>[0-9]) (?P<toughness>[0-9]) (?P<wounds>[0-9]) (?P<attacks>[0-9]) (?P<leadership>[0-9]+) (?P<save>[0-9]\+) (?P<max_number>[0-9\-])"
 FIGURE_SPECIALIST_REGEX = r"SPECIALISTS (?P<specialists>[A-Za-z (),]+)\n"
 FIGURE_DEFAULT_WARGEAR_REGEX = r"This model is armed (?P<default_wargear>[ \S]+\.\n)"
+FIGURE_ABILITY_REGEX = r"ABILITIES(?P<abilities>[ \S]*\n)+\nFACTION"
 
 def add_obj(obj: Base):
     db.session.add(obj)
@@ -227,7 +228,7 @@ def extract_wargear(corpus:str):
 
     # find the point costs
     for wg, origname in wargear_origname_tuples:
-        wg_cost_regex = re.compile(f'{origname} ([0-9]+)\n')
+        wg_cost_regex = re.compile(f'{origname} ([0-9]+)\n', re.IGNORECASE)
         wg_cost_matches = [ m.string[m.start(1):m.end(1)] for m in wg_cost_regex.finditer(corpus)]
         if not wg_cost_matches:
             print(f'no cost for {wg.name} found')
@@ -301,16 +302,61 @@ def extract_figures(corpus: str):
 
         figure_profiles = extract_corpus(FIGURE_PROFILE_REGEX, matchdict['stuff'], process_figure_profile)
 
+        for fp in f.profiles:
+            fp_cost_regex = re.compile(f'{fp.name} ([0-9]+)\n', re.IGNORECASE)
+            fp_cost_matches = [ m.string[m.start(1):m.end(1)] for m in fp_cost_regex.finditer(corpus)]
+            if not fp_cost_matches:
+                print(f'no cost for {fp.name} found')
+                continue
+            fp.points = int(fp_cost_matches[0])
+            db.session.commit()
+            
+
         def process_default_wargear(md, ms):
             tokens = [ s.replace(',', '').replace('.', '') for s in md['default_wargear'].split(' ') ]
             for t in tokens:
                 wargear = db.session.query(Wargear).filter(func.lower(Wargear.name) == t.lower()).first()
                 if wargear:
-                    print(f'found default wargear {wargear.name}')
                     f.default_wargear.append(wargear)
             db.session.commit()
 
+        def process_figure_ability(md, ms):
+            ability_text = md['abilities']
+            ability_text = ms.replace('ABILITIES', '')[:ms.index('FACTION')]
+            ability_text = ability_text.replace('FACTION', '')
+            ability_lines = [ l.strip().replace('\n', '') for l in ability_text.split('\n') if l ]
+
+            
+            abilities = []
+            for idx, ability_line in enumerate(ability_lines):
+                try:
+                    ability_name, ability_text = ability_line.split(':')
+                    a = Ability(
+                        name=ability_name,
+                        text=ability_text
+                    )
+                    add_obj(a)
+                    abilities.append(a)
+                    f.abilities.append(a)
+                except:
+                    if not abilities or len(abilities) < 1:
+                        try:
+                            name, text = ability_line[:ability_line.index('(')-1], ability_line[ability_line.index('('):]
+                            a = Ability(name=name, text=text)
+                            add_obj(a)
+                        except:
+                            breakpoint()
+
+                    else:
+                        abilities[-1].text += ' ' + ability_line
+                        db.session.commit()
+                        continue
+
+
+            
+
         extract_corpus(FIGURE_DEFAULT_WARGEAR_REGEX, selected_text, process_default_wargear)
+        extract_corpus(FIGURE_ABILITY_REGEX, selected_text, process_figure_ability)
 
     extract_corpus(FIGURE_REGEX, corpus, process_figure)
 
