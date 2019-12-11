@@ -143,10 +143,7 @@ class Figure(Base):
 
     @property
     def displayName(self):
-        dn = self.figure_type
-        if self.figure_name:
-            dn += f' {self.figure_name}'
-        return dn
+        return self.name
 
 class FigureProfile(Base):
     __tablename__ = 'figureprofile'
@@ -351,8 +348,8 @@ class RosterEntry(Base):
     @property
     def points(self):
         wargear_points = sum([ w.points if w.points else 0 for w in self.wargear ]) if self.wargear else 0
-        figure_points = self.figure.points if self.figure.points else 0
-        return wargear_points + figure_points
+        figure_points = self.profile.points if self.profile and self.profile.points else 0
+        return int(wargear_points) + int(figure_points)
 
 class Faction(Base):
     __tablename__ = 'faction'
