@@ -13,11 +13,25 @@
         <p> Stop using your hand...</p> 
         <p> Automatically generate command rosters </p>
     </div>
-    <div class="features-container splash-card">
-        Community Rosters
+    <div class="features-container">
+        <div class="splash-card"> 
+        <p>Get Started</p>
+        <a href="/" class="see-all"> FULL EDITOR </a>
+        </div> 
+        <div class="splash-card"> 
+            <p>Community Rosters</p>
+            <a href="/" class="see-all"> SEE ALL </a>
+            <div class="community-roster-scroll-container">
+                {% for roster in rosters %}
+                    <div class="community-roster-entry">
+                        <a href="/"> {{ roster.name }}</a>
+                    </div>
+                {% endfor %}
+            </div>    
+        </div> 
     </div>
     <div class="start-prompt-container">
-        Get Started!
+        
     </div>
 </div>
 <div class="container">
@@ -26,8 +40,8 @@
             <h1 class="display-4 font-italic">Roster</h1>
         </div>
     </div> #}
-    <div id="roster-grid splash-grid"></div>
-    <div id="entry-grid splash-grid"></div>
+    <div id="roster-grid"></div>
+    <div id="entry-grid"></div>
 </div>
 {# <div class="splasher-container"></div> #}
 {% endblock %}
@@ -42,7 +56,6 @@
 <script>
     $(function() {
         initialize_roster_grid("roster-grid");
-        initialize_roster_entry_grid("entry-grid", 7)
     });
         
 

@@ -1,3 +1,35 @@
+/* font-family: 'Libre Barcode 39 Text', cursive;
+font-family: 'Codystar', cursive;
+font-family: 'Averia Serif Libre', cursive;
+font-family: 'Jolly Lodger', cursive;
+font-family: 'Londrina Shadow', cursive;
+font-family: 'Baumans', cursive;
+font-family: 'Varela Round', sans-serif; */
+/* font-family: 'Libre Barcode 39 Text', cursive;
+font-family: 'Codystar', cursive;
+font-family: 'Averia Serif Libre', cursive;
+font-family: 'Jolly Lodger', cursive;
+font-family: 'Londrina Shadow', cursive;
+font-family: 'Baumans', cursive;
+font-family: 'Varela Round', sans-serif; 
+ont-family: 'Libre Barcode 39 Text', cursive;
+font-family: 'Codystar', cursive;
+font-family: 'Averia Serif Libre', cursive;
+font-family: 'Jolly Lodger', cursive;
+font-family: 'Londrina Shadow', cursive;
+font-family: 'Baumans', cursive;
+font-family: 'Varela Round', sans-serif;
+font-family: 'Anton', sans-serif;
+font-family: 'Coda Caption', sans-serif;
+font-family: 'Bangers', cursive;
+font-family: 'Fontdiner Swanky', cursive;
+font-family: 'Slackey', cursive;
+font-family: 'Chewy', cursive;
+font-family: 'Sniglet', cursive;
+font-family: 'UnifrakturCook', cursive;
+font-family: 'Josefin Sans', sans-serif;
+*/
+
 :root {
     --dark-grey: #212626;
     --light-grey: #D9D9D9;
@@ -41,9 +73,7 @@ td {
     height: 96vmax;
     padding: 0;
     padding-top: 15vmin;
-    background-color: var(--war-orange);
-    
-
+    background-color: var(--war-orange);    
 }
 
 .title-container {
@@ -54,7 +84,7 @@ td {
 }
 
 .logo {
-    margin-bottom: 15vmin;
+    margin-bottom: 2.5vmin;
     clear: both;
     /* font-family: 'Averia Serif Libre', cursive; */
     /* font-family: 'Varela Round', sans-serif; */
@@ -67,6 +97,7 @@ td {
 }
 
 .one-sentence-container {
+    margin-bottom: 10vmin;
     color: var(--dark-grey);
     font-size: 5vmin;
     font-family: 'Chewy', cursive;
@@ -74,41 +105,17 @@ td {
     text-shadow: -1px -1px 0 #FFF, 1px -1px 0 #FFF, -1px 1px 0 #FFF, 1px 1px 0 #FFF;
 
 }
-/* font-family: 'Libre Barcode 39 Text', cursive;
-font-family: 'Codystar', cursive;
-font-family: 'Averia Serif Libre', cursive;
-font-family: 'Jolly Lodger', cursive;
-font-family: 'Londrina Shadow', cursive;
-font-family: 'Baumans', cursive;
-font-family: 'Varela Round', sans-serif; */
-/* font-family: 'Libre Barcode 39 Text', cursive;
-font-family: 'Codystar', cursive;
-font-family: 'Averia Serif Libre', cursive;
-font-family: 'Jolly Lodger', cursive;
-font-family: 'Londrina Shadow', cursive;
-font-family: 'Baumans', cursive;
-font-family: 'Varela Round', sans-serif; 
-ont-family: 'Libre Barcode 39 Text', cursive;
-font-family: 'Codystar', cursive;
-font-family: 'Averia Serif Libre', cursive;
-font-family: 'Jolly Lodger', cursive;
-font-family: 'Londrina Shadow', cursive;
-font-family: 'Baumans', cursive;
-font-family: 'Varela Round', sans-serif;
-font-family: 'Anton', sans-serif;
-font-family: 'Coda Caption', sans-serif;
-font-family: 'Bangers', cursive;
-font-family: 'Fontdiner Swanky', cursive;
-font-family: 'Slackey', cursive;
-font-family: 'Chewy', cursive;
-font-family: 'Sniglet', cursive;
-font-family: 'UnifrakturCook', cursive;
-font-family: 'Josefin Sans', sans-serif;
-*/
+
+.features-container {
+    width: 100vmin;
+    margin: auto;
+}
 
 .splash-card {
+    display: inline-block;
+    position: relative;
     height: 20vmin;
-    width: 80%;
+    width: 48vmin;
     margin: auto;
     background-color: cornsilk;
     box-shadow: #212626 1px 1px;
@@ -116,11 +123,23 @@ font-family: 'Josefin Sans', sans-serif;
     font-family: 'Josefin Sans', sans-serif;
     color: var(--dark-grey);
     padding: 1%;
+    float: left;
     /* font-size: 20pt; */
 }
 
 .splash-grid {
-    width: 50vw;
+    /* width: 50vw;
     height: auto;
-    display: inline-block;
+    display: inline-block; */
+}
+
+.community-roster-scroll-container {
+    overflow: scroll;
+    height: 60%;
+}
+
+.see-all {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
