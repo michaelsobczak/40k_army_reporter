@@ -61,6 +61,9 @@ roster_faction_table = make_secondary_table('roster', 'faction')
 user_roster_table = make_secondary_table('user', 'roster')
 user_role_table = make_secondary_table('user', 'role')
 figure_specialization_table = make_secondary_table('figure', 'specialization')
+wargearprofile_ability_table = make_secondary_table('wargearprofile', 'ability')
+figureprofile_ability_table = make_secondary_table('figureprofile', 'ability')
+
 class User(UserMixin, Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
@@ -108,21 +111,11 @@ class Role(Base):
 class Figure(Base):
     __tablename__ = 'figure'
     id = Column(Integer, primary_key=True)
-    figure_type = Column(Text)
-    figure_name = Column(Text)
-    points = Column(Integer)
-    move = Column(Text)
-    weapon_skill = Column(Integer)
-    ballistic_skill = Column(Integer)
-    strength = Column(Text)
-    toughness = Column(Text)
-    wounds = Column(Text)
-    attacks = Column(Text)
-    leadership = Column(Text)
-    save = Column(Text)
-    max_number = Column(Integer)
-    allowed_wargear = relationship('Wargear', secondary=figure_wargear_table, back_populates='figures', lazy='subquery')
-    allowed_specializations = relationship('Specialization',
+    name = Column(Text)
+    
+    profiles = relationship('FigureProfile')
+    default_wargear = relationship('Wargear', secondary=figure_wargear_table, back_populates='figures', lazy='subquery')
+    specializations = relationship('Specialization',
         secondary=figure_specialization_table,
         back_populates='figures',
         lazy='subquery')
@@ -146,31 +139,49 @@ class Figure(Base):
     )
 
     def __str__(self):
-        return f'{self.figure_type if self.figure_type else ""} {self.figure_name if self.figure_name else ""}'
+        return f'{self.name}'
 
     @property
     def displayName(self):
-        dn = self.figure_type
-        if self.figure_name:
-            dn += f' {self.figure_name}'
-        return dn
+        return self.name
+
+class FigureProfile(Base):
+    __tablename__ = 'figureprofile'
+    id = Column(Integer, primary_key=True)
+
+    name = Column(Text)
+
+    figure_id = Column(Integer, ForeignKey('figure.id'))
+    figure = relationship('Figure')
+
+    points = Column(Integer)
+    move = Column(Text)
+    weapon_skill = Column(Integer)
+    ballistic_skill = Column(Integer)
+    strength = Column(Text)
+    toughness = Column(Text)
+    wounds = Column(Text)
+    attacks = Column(Text)
+    leadership = Column(Text)
+    save = Column(Text)
+    max_number = Column(Text)
+
+    def __str__(self):
+        return f'{self.name}'
 
 class Wargear(Base):
     __tablename__ = 'wargear'
     id = Column(Integer, primary_key=True)
     name = Column(Text)
-    profile = Column(Text)
-    wargear_range = Column(Text)
-    wargear_type = Column(Text)
-    strength = Column(Text)
-    ap = Column(Text)
-    damage = Column(Text)
     points = Column(Integer)
+    text = Column(Text)
+
+    profiles = relationship('WargearProfile')
 
     figures = relationship(
         'Figure',
         secondary=figure_wargear_table,
-        back_populates='allowed_wargear',
+        back_populates='default_wargear',
         lazy='subquery'
     )
 
@@ -189,10 +200,24 @@ class Wargear(Base):
     )
 
     def __str__(self):
-        if self.profile:
-            return f'{self.name} {self.profile}'
-        else:
-            return self.name
+        return self.name
+
+class WargearProfile(Base):
+    __tablename__ = 'wargearprofile'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text)
+    wargear_id = Column(Integer, ForeignKey('wargear.id'))
+    wargear = relationship('Wargear')
+    wargear_range = Column(Text)
+    wargear_type = Column(Text)
+    strength = Column(Text)
+    ap = Column(Text)
+    damage = Column(Text)
+
+    abilities = relationship('Ability', secondary=wargearprofile_ability_table, lazy='subquery')
+
+    def __str__(self):
+        return f'{self.name} {self.wargear_range} {self.wargear_type} {self.strength} {self.ap} {self.damage}'
 
 class Keyword(Base):
     __tablename__ = 'keyword'
@@ -246,7 +271,7 @@ class Specialization(Base):
     tactic = relationship('Tactic')
     passive = Column(Text)
 
-    figures = relationship('Figure', secondary=figure_specialization_table, back_populates='allowed_specializations', lazy='subquery')
+    figures = relationship('Figure', secondary=figure_specialization_table, back_populates='specializations', lazy='subquery')
 
     def __str__(self):
         return self.name
@@ -299,6 +324,9 @@ class RosterEntry(Base):
     figure_id = Column(Integer, ForeignKey('figure.id'))
     figure = relationship('Figure', lazy='subquery')
 
+    figureprofile_id = Column(Integer, ForeignKey('figureprofile.id'))
+    profile = relationship('FigureProfile', lazy='subquery')
+
     specialization_id = Column(Integer, ForeignKey('specialization.id'))
     specialization = relationship('Specialization', lazy='subquery')
 
@@ -319,8 +347,8 @@ class RosterEntry(Base):
     @property
     def points(self):
         wargear_points = sum([ w.points if w.points else 0 for w in self.wargear ]) if self.wargear else 0
-        figure_points = self.figure.points if self.figure.points else 0
-        return wargear_points + figure_points
+        figure_points = self.profile.points if self.profile and self.profile.points else 0
+        return int(wargear_points) + int(figure_points)
 
 class Faction(Base):
     __tablename__ = 'faction'

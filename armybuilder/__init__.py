@@ -5,7 +5,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager
 import flask_restless
 import os
-from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry, Faction, User, Role
+from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry, Faction, User, Role, WargearProfile, FigureProfile
 
 app = Flask(__name__)
 
@@ -26,8 +26,7 @@ login = LoginManager(app)
 def load_user(id):
     return db.session.query(User).get(int(id))
 
-# set up admin stuff
-admin = Admin(app, name='Admin')
+
 
 class ArmybuilderModelView(ModelView):
     can_export = True
@@ -41,7 +40,7 @@ class RosterView(ArmybuilderModelView):
     column_editable_list = ['name', 'player_name', 'factions', 'entries', 'users']
 
 class TacticView(ArmybuilderModelView):
-    column_searchable_list = (Tactic.name, Tactic.text, Tactic.cost)
+    column_searchable_list = ('name', 'text', 'cost')
     column_filters = ['name','text', 'cost']
     column_list = ['name', 'text', 'cost', 'factions', 'specialization']
     column_editable_list = ['name', 'text', 'cost', 'factions', 'specialization']
@@ -52,30 +51,41 @@ class UserView(ArmybuilderModelView):
     column_editable_list = ['username', 'email', 'roles', 'rosters']
 
 class FigureView(ArmybuilderModelView):
-    column_list = ['figure_type', 'figure_name', 'move', 'weapon_skill', 'ballistic_skill', 'strength', 'toughness', 'wounds', 'attacks', 'leadership', 'save', 'max_number', 'allowed_wargear', 'allowed_specializations', 'factions', 'keywords','abilities', 'points']
-    column_editable_list = ['figure_type', 'figure_name', 'move', 'weapon_skill', 'ballistic_skill', 'strength', 'toughness', 'wounds', 'attacks', 'leadership', 'save', 'max_number', 'allowed_wargear', 'allowed_specializations', 'factions', 'keywords','abilities', 'points']
+    column_list = ['name', 'default_wargear', 'specializations', 'factions', 'keywords','abilities', 'profiles']
+    column_editable_list = ['name', 'default_wargear', 'specializations', 'factions', 'keywords','abilities', 'profiles']
+
+class WargearProfileView(ArmybuilderModelView):
+    column_list = ['name', 'wargear_range', 'wargear_type', 'strength', 'ap', 'damage', 'wargear', 'abilities']
+    column_editable_list = ['name', 'wargear_range', 'wargear_type', 'strength', 'ap', 'damage', 'wargear', 'abilities']
 
 class WargearView(ArmybuilderModelView):
-    column_list = ['name', 'profile', 'wargear_range', 'wargear_type', 'strength', 'ap', 'damage', 'points']
-    column_editable_list = ['name', 'profile', 'wargear_range', 'wargear_type', 'strength', 'ap', 'damage', 'points']
+    column_list = ['name', 'points', 'profiles']
+    column_editable_list = ['name', 'points', 'profiles']
 
 
-admin.add_view(FigureView(Figure, db.session, category='Pieces'))
-admin.add_view(WargearView(Wargear, db.session, category='Pieces'))
-admin.add_view(ArmybuilderModelView(Keyword, db.session, category='Metadata'))
-admin.add_view(ArmybuilderModelView(Ability, db.session, category='Rules'))
-admin.add_view(ArmybuilderModelView(Specialization, db.session, category='Rules'))
-admin.add_view(TacticView(Tactic, db.session, category='Rules'))
-admin.add_view(RosterView(Roster, db.session, category='Roster'))
-admin.add_view(RosterEntryView(RosterEntry, db.session, category='Roster'))
-admin.add_view(ArmybuilderModelView(Faction, db.session, category='Metadata'))
-admin.add_view(UserView(User, db.session, category='User'))
-admin.add_view(ArmybuilderModelView(Role, db.session, category='User'))
+@app.before_first_request
+def init_app():
+    # set up admin stuff
+    admin = Admin(app, name='Admin')
+    admin.add_view(FigureView(Figure, db.session, category='Pieces'))
+    admin.add_view(WargearView(Wargear, db.session, category='Pieces'))
+    admin.add_view(ArmybuilderModelView(Keyword, db.session, category='Metadata'))
+    admin.add_view(ArmybuilderModelView(Ability, db.session, category='Rules'))
+    admin.add_view(ArmybuilderModelView(Specialization, db.session, category='Rules'))
+    admin.add_view(TacticView(Tactic, db.session, category='Rules'))
+    admin.add_view(RosterView(Roster, db.session, category='Roster'))
+    admin.add_view(RosterEntryView(RosterEntry, db.session, category='Roster'))
+    admin.add_view(ArmybuilderModelView(Faction, db.session, category='Metadata'))
+    admin.add_view(UserView(User, db.session, category='User'))
+    admin.add_view(ArmybuilderModelView(Role, db.session, category='User'))
+    admin.add_view(WargearProfileView(WargearProfile, db.session, category='Pieces'))
+    admin.add_view(ArmybuilderModelView(FigureProfile, db.session, category='Pieces'))
 
-manager = flask_restless.APIManager(app, session=db.session)
-manager.create_api(Roster, include_methods=['points'], methods=['GET', 'POST', 'PUT', 'DELETE'])
-manager.create_api(RosterEntry, allow_delete_many=True, include_methods=['points'], methods=['GET', 'POST', 'PUT', 'DELETE'])
-manager.create_api(Specialization, results_per_page=-1, methods=['GET', 'POST', 'PUT', 'DELETE'])
-manager.create_api(Wargear, results_per_page=-1,  methods=['GET', 'POST', 'PUT', 'DELETE'])
-manager.create_api(Figure, include_methods=['displayName'], results_per_page=-1, methods=['GET', 'POST', 'PUT', 'DELETE'])
+    manager = flask_restless.APIManager(app, session=db.session)
+    manager.create_api(Roster, include_methods=['points'], methods=['GET', 'POST', 'PUT', 'DELETE'])
+    manager.create_api(RosterEntry, allow_delete_many=True, include_methods=['points'], methods=['GET', 'POST', 'PUT', 'DELETE'])
+    manager.create_api(Specialization, results_per_page=-1, methods=['GET', 'POST', 'PUT', 'DELETE'])
+    manager.create_api(Wargear, results_per_page=-1,  methods=['GET', 'POST', 'PUT', 'DELETE'])
+    manager.create_api(Figure, include_methods=['displayName'], results_per_page=-1, methods=['GET', 'POST', 'PUT', 'DELETE'])
+    manager.create_api(FigureProfile, methods=['GET', 'POST', 'PUT', 'DELETE'], results_per_page=-1)
 from . import views, report
