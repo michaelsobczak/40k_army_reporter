@@ -22,7 +22,7 @@ RelationshipSelectField.prototype = new jsGrid.SelectField({
         return $('<div>')
                     .addClass(this.name + '-field')
                     .attr('id', 'grid-' + item['id'] + '-' + this.name + '-field')
-                    .text(this.relationshipObjStr(item[this.name.replace('_id', '')] ? item[this.name.replace('_id', '')] : item));
+                    .text(this.relationshipObjStr(item[this.name.replace('_id', '')]));
     },
     headerTemplate: function() {
         var text = this.headerStr;
@@ -225,17 +225,8 @@ function update_data(item) {
     var d = $.Deferred();
     console.log(item);
     var clean_item = {};
-    if (item.specialization_id && item.specialization_id != 0) {
-        clean_item['specialization_id'] = item.specialization_id;
-    }
-    if (item.figure_id && item.figure_id != 0) {
-        clean_item['figure_id'] = item.figure_id;
-    }
-    if (item.figureprofile_id && item.figureprofile_id != 0) {
-        clean_item['figureprofile_id'] = item.figureprofile_id;
-    }
+    clean_item['specialization_id'] = item.specialization_id;
     clean_item['figure_id'] = item.figure_id;
-    clean_item['figureprofile_id'] = item.figureprofile_id;
     clean_item['wargear'] = [];
     for (var i = 0; i < item['wargear'].length; i++) {
         var wg = item.wargear[i];
@@ -295,15 +286,8 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
         function insert_data(item) {
             var d = $.Deferred();
             var clean_item = {};
-            if (item.specialization_id && item.specialization_id != 0) {
-                clean_item['specialization_id'] = item.specialization_id;
-            }
-            if (item.figure_id && item.figure_id != 0) {
-                clean_item['figure_id'] = item.figure_id;
-            }
-            if (item.figureprofile_id && item.figureprofile_id != 0) {
-                clean_item['figureprofile_id'] = item.figureprofile_id;
-            }
+            clean_item['specialization_id'] = item.specialization_id;
+            clean_item['figure_id'] = item.figure_id;
             clean_item['roster_id'] = roster_id;
             clean_item['wargear'] = [];
             for (var i = 0; i < item['wargear'].length; i++) {
@@ -343,15 +327,11 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                     if (!obj) {
                         return '';
                     }
-                    var s = obj.name;
-                    return s;
-                }},
-                { name: "figureprofile_id", width: 200, type: "relationship", url: "/api/figureprofile", relationshipObjStr: (obj) => {
-                    if (!obj) {
-                        return '';
+                    var s = obj.figure_name;
+                    if (obj.figure_type && obj.figure_type.length > 0) {
+                        s += ' ' + obj.figure_type;
                     }
-                    return obj.name;
-
+                    return s;
                 }},
                 { name: "specialization_id", type: "relationship", url: "/api/specialization", relationshipObjStr: (obj) => {
                     return obj ? obj.name : '';
