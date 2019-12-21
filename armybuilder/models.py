@@ -5,15 +5,11 @@ import os
 from typing import Type
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-DB_DIALECT = 'sqlite'
-DB_PATH = os.path.join(os.path.dirname(__file__), '.db', 'db.sqlite')
 
 def get_sqlalchemy_uri() -> str:
-    # triple quotes for sqlite, update this with dialect change
-    uri = f'{DB_DIALECT}:///{DB_PATH}'
 
     if 'RDS_HOSTNAME' in os.environ:
-        print('Running on cloud, using database service...')
+        print('Using RDS database...')
         host = os.environ['RDS_HOSTNAME']
         port = os.environ['RDS_PORT']
         name = os.environ['RDS_DB_NAME']
@@ -22,17 +18,8 @@ def get_sqlalchemy_uri() -> str:
         # postgresql://scott:tiger@localhost:5432/mydatabase
         uri = f'postgresql://{username}:{password}@{host}:{port}/{name}'
     else:
-        print('No database service found, using sqlite...')
-    # For SQLite, make sure DB dir exists and create the tables
-    # Update this if dialect changes
-    if not os.path.exists(DB_PATH):
-        
-        db_dir = os.path.dirname(DB_PATH)
-        if not os.path.exists(db_dir):
-            os.makedirs(db_dir)
-        os.system(f'touch "{DB_PATH}"')
-        engine = create_engine(uri)
-        Base.metadata.create_all(engine)
+        print('No RDS database found, set RDS_ environment variables before running')
+        uri = None
 
     return uri
 
@@ -63,6 +50,7 @@ user_role_table = make_secondary_table('user', 'role')
 figure_specialization_table = make_secondary_table('figure', 'specialization')
 wargearprofile_ability_table = make_secondary_table('wargearprofile', 'ability')
 figureprofile_ability_table = make_secondary_table('figureprofile', 'ability')
+rosterentry_killteam_table = make_secondary_table('rosterentry', 'killteam')
 
 class User(UserMixin, Base):
     __tablename__ = 'user'
@@ -142,6 +130,10 @@ class Figure(Base):
     @property
     def displayName(self):
         return self.name
+
+    @property
+    def jsondict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 class FigureProfile(Base):
     __tablename__ = 'figureprofile'
@@ -362,3 +354,14 @@ class Faction(Base):
 
     def __str__(self):
         return self.name
+
+
+class Killteam(Base):
+    __tablename__ = 'killteam'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text)
+    notes = Column(Text)
+    roster_id = Column(Integer, ForeignKey('roster.id'))
+    roster = relationship('Roster')
+
+    team = relationship('RosterEntry', secondary=rosterentry_killteam_table)

@@ -8,3 +8,10 @@ def get_wargear():
     return jsonify({
         'objects': [ w.jsondict for w in wargear ]
     })
+
+@app.route('/v2/api/figure', methods=['GET'])
+def get_figures():
+    figures = db.session.query(Figure).all()
+    return jsonify({
+        'objects': [ f.jsondict for f in figures ]
+    })

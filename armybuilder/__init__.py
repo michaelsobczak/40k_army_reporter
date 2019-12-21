@@ -5,7 +5,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager
 import flask_restless
 import os
-from .models import Base, get_sqlalchemy_uri, Figure, Wargear, Keyword, Ability, Specialization, Tactic, Roster, RosterEntry, Faction, User, Role, WargearProfile, FigureProfile
+from .models import *
 
 app = Flask(__name__)
 
@@ -91,5 +91,6 @@ def init_app():
     manager.create_api(Keyword, methods=['GET', 'POST', 'PUT', 'DELETE'], results_per_page=-1)
     manager.create_api(Faction, methods=['GET', 'POST', 'PUT', 'DELETE'], results_per_page=-1)
     manager.create_api(Tactic, methods=['GET', 'POST', 'PUT', 'DELETE'], results_per_page=-1)
-    
+    manager.create_api(Killteam, methods=['GET', 'POST', 'PUT', 'DELETE'], results_per_page=-1)
+
 from . import views, report, api
