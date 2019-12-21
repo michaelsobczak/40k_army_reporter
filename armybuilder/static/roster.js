@@ -349,14 +349,14 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                     var s = obj.name;
                     return s;
                 }},
-                { name: "figureprofile_id", width: 200, type: "relationship", url: "/api/figureprofile", relationshipObjStr: (obj) => {
+                { name: "figureprofile_id", width: 200, type: "relationship", url: "/v2/api/figureprofile", relationshipObjStr: (obj) => {
                     if (!obj) {
                         return '';
                     }
                     return obj.name;
 
                 }},
-                { name: "specialization_id", type: "relationship", url: "/api/specialization", relationshipObjStr: (obj) => {
+                { name: "specialization_id", type: "relationship", url: "/v2/api/specialization", relationshipObjStr: (obj) => {
                     return obj ? obj.name : '';
                 }},
                 { name: "wargear", type: "select", width: 250, align: "center", items: wargear, textField: "name", valueField: "id",
