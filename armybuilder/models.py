@@ -131,6 +131,10 @@ class Figure(Base):
     def displayName(self):
         return self.name
 
+    @property
+    def jsondict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 class FigureProfile(Base):
     __tablename__ = 'figureprofile'
     id = Column(Integer, primary_key=True)

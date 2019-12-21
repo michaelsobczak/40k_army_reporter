@@ -342,7 +342,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
             fields: [
                 { name: "id", visible: false},
                 { name: "name", type: "text"},
-                { name: "figure_id", width: 200, type: "relationship", url: "/api/figure", relationshipObjStr: (obj) => {
+                { name: "figure_id", width: 200, type: "relationship", url: "/v2/api/figure", relationshipObjStr: (obj) => {
                     if (!obj) {
                         return '';
                     }
