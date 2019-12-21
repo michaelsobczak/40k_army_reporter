@@ -88,4 +88,8 @@ def init_app():
     manager.create_api(Wargear, results_per_page=-1,  methods=['GET', 'POST', 'PUT', 'DELETE'])
     manager.create_api(Figure, include_methods=['displayName'], results_per_page=-1, methods=['GET', 'POST', 'PUT', 'DELETE'])
     manager.create_api(FigureProfile, methods=['GET', 'POST', 'PUT', 'DELETE'], results_per_page=-1)
+    manager.create_api(Keyword, methods=['GET', 'POST', 'PUT', 'DELETE'], results_per_page=-1)
+    manager.create_api(Faction, methods=['GET', 'POST', 'PUT', 'DELETE'], results_per_page=-1)
+    manager.create_api(Tactic, methods=['GET', 'POST', 'PUT', 'DELETE'], results_per_page=-1)
+    
 from . import views, report, api
