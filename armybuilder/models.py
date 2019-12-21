@@ -182,6 +182,7 @@ class Wargear(Base):
         'Ability',
         secondary=wargear_ability_table,
         back_populates='wargear',
+        lazy='subquery'
         
     )
 
