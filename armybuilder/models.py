@@ -52,36 +52,6 @@ wargearprofile_ability_table = make_secondary_table('wargearprofile', 'ability')
 figureprofile_ability_table = make_secondary_table('figureprofile', 'ability')
 rosterentry_killteam_table = make_secondary_table('rosterentry', 'killteam')
 
-class User(UserMixin, Base):
-    __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    username = Column(String(64), index=True, unique=True)
-    email = Column(String(120), index=True, unique=True)
-    password_hash = Column(String(128))
-
-    rosters = relationship(
-        'Roster',
-        secondary=user_roster_table,
-        back_populates='users'
-    )
-    def __repr__(self):
-        return '<User {}>'.format(self.username)
-
-    def __str__(self):
-        return self.username
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    roles = relationship(
-        'Role',
-        secondary=user_role_table,
-        back_populates='users'
-    )
-
 class Role(Base):
     __tablename__ = 'role'
     id = Column(Integer, primary_key=True)
@@ -135,6 +105,9 @@ class Figure(Base):
     def jsondict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+
+
+
 class FigureProfile(Base):
     __tablename__ = 'figureprofile'
     id = Column(Integer, primary_key=True)
@@ -158,6 +131,11 @@ class FigureProfile(Base):
 
     def __str__(self):
         return f'{self.name}'
+
+    @property
+    def jsondict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Wargear(Base):
     __tablename__ = 'wargear'
@@ -267,6 +245,11 @@ class Specialization(Base):
 
     def __str__(self):
         return self.name
+
+    @property
+    def jsondict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 class Tactic(Base):
     __tablename__ = 'tactic'
     id = Column(Integer, primary_key=True)
@@ -365,3 +348,33 @@ class Killteam(Base):
     roster = relationship('Roster')
 
     team = relationship('RosterEntry', secondary=rosterentry_killteam_table)
+
+class User(UserMixin, Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    username = Column(String(64), index=True, unique=True)
+    email = Column(String(120), index=True, unique=True)
+    password_hash = Column(String(128))
+
+    rosters = relationship(
+        'Roster',
+        secondary=user_roster_table,
+        back_populates='users'
+    )
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+    def __str__(self):
+        return self.username
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    roles = relationship(
+        'Role',
+        secondary=user_role_table,
+        back_populates='users'
+    )
