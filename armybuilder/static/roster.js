@@ -342,7 +342,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
             fields: [
                 { name: "id", visible: false},
                 { name: "name", type: "text"},
-                { name: "figure_id", width: 300, type: "relationship", url: "/api/figure", relationshipObjStr: (obj) => {
+                { name: "figure_id", width: 200, type: "relationship", url: "/api/figure", relationshipObjStr: (obj) => {
                     if (!obj) {
                         return '';
                     }
@@ -397,7 +397,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                                     .addClass('wargear-select-field form-control')
                                     .prop('multiple', 'true')
                                     .attr('id', sel_id);
-                    $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
+                    $.get('/v2/api/wargear', null, function(data, textStatus, jqXHR ) {
                         
                         $(data['objects']).each(function() {
                             sel.append($("<option>").attr('value',this.id).text(this.name));
@@ -420,7 +420,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
                                     .addClass('wargear-select-field form-control')
                                     .prop('multiple', 'true')
                                     .attr('id', sel_id);
-                    $.get('/api/wargear', null, function(data, textStatus, jqXHR ) {
+                    $.get('/v2/api/wargear', null, function(data, textStatus, jqXHR ) {
                         
                         $(data['objects']).each(function() {
                             sel.append($("<option>").attr('value',this.id).text(this.name));
