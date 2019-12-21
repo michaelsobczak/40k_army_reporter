@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 import flask_restless
 import os
 from .models import *
@@ -25,6 +25,10 @@ login = LoginManager(app)
 @login.user_loader
 def load_user(id):
     return db.session.query(User).get(int(id))
+
+@app.context_processor
+def inject_user():
+    return dict(user=current_user)
 
 
 

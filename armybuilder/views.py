@@ -57,7 +57,7 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('army_input_view'))
+        return redirect(url_for('rosters_view'))
     return render_template('web/login.html.jinja', title='Sign In', form=form)
 
 @app.route('/logout')
