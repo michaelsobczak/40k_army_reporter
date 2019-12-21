@@ -74,7 +74,8 @@ class User(UserMixin, Base):
     roles = relationship(
         'Role',
         secondary=user_role_table,
-        back_populates='users'
+        back_populates='users',
+        lazy='subquery'
     )
 
 class Role(Base):
@@ -85,7 +86,8 @@ class Role(Base):
     users = relationship(
         'User',
         secondary=user_role_table,
-        back_populates='roles'
+        back_populates='roles',
+        lazy='subquery'
     )
 
     def __str__(self):
@@ -97,25 +99,27 @@ class Figure(Base):
     name = Column(Text)
     
     profiles = relationship('FigureProfile')
-    default_wargear = relationship('Wargear', secondary=figure_wargear_table, back_populates='figures')
+    default_wargear = relationship('Wargear', secondary=figure_wargear_table, back_populates='figures', lazy='subquery')
     specializations = relationship('Specialization',
         secondary=figure_specialization_table,
-        back_populates='figures')
+        back_populates='figures', lazy='subquery')
     factions = relationship(
-        'Faction', secondary=figure_faction_table
+        'Faction', secondary=figure_faction_table, lazy='subquery'
         
     )
 
     keywords = relationship(
         'Keyword',
         secondary=figure_keyword_table,
-        back_populates='figures'
+        back_populates='figures',
+        lazy='subquery'
         
     )
     abilities = relationship(
         'Ability',
         secondary=figure_ability_table,
-        back_populates='figures'
+        back_populates='figures',
+        lazy='subquery'
         
     )
 
@@ -175,6 +179,7 @@ class Wargear(Base):
         'Figure',
         secondary=figure_wargear_table,
         back_populates='default_wargear',
+        lazy='subquery'
         
     )
 
@@ -190,6 +195,7 @@ class Wargear(Base):
         'RosterEntry',
         secondary=roster_entry_wargear_table,
         back_populates='wargear',
+        lazy='subquery'
         
     )
 
@@ -212,7 +218,7 @@ class WargearProfile(Base):
     ap = Column(Text)
     damage = Column(Text)
 
-    abilities = relationship('Ability', secondary=wargearprofile_ability_table)
+    abilities = relationship('Ability', secondary=wargearprofile_ability_table, lazy='subquery')
 
     def __str__(self):
         return f'{self.name} {self.wargear_range} {self.wargear_type} {self.strength} {self.ap} {self.damage}'
@@ -225,7 +231,8 @@ class Keyword(Base):
     figures = relationship(
         'Figure',
         secondary=figure_keyword_table,
-        back_populates='keywords'
+        back_populates='keywords',
+        lazy='subquery'
     )
 
     def __str__(self):
@@ -240,20 +247,22 @@ class Ability(Base):
     wargear = relationship(
         'Wargear',
         secondary=wargear_ability_table,
-        back_populates='abilities'
-        
+        back_populates='abilities',
+        lazy='subquery'
     )
 
     figures = relationship(
         'Figure',
         secondary=figure_ability_table,
-        back_populates='abilities'
+        back_populates='abilities',
+        lazy='subquery'
         
     )
 
     factions = relationship(
         'Faction',
-        secondary=faction_ability_table
+        secondary=faction_ability_table,
+        lazy='subquery'
     )
 
     def __str__(self):
@@ -267,7 +276,7 @@ class Specialization(Base):
     tactics = relationship('Tactic')
     passive = Column(Text)
 
-    figures = relationship('Figure', secondary=figure_specialization_table, back_populates='specializations')
+    figures = relationship('Figure', secondary=figure_specialization_table, back_populates='specializations', lazy='subquery')
 
     def __str__(self):
         return self.name
@@ -289,7 +298,7 @@ class Tactic(Base):
     keyword = relationship('Keyword')
 
     factions = relationship('Faction',
-        secondary=tactic_faction_table)
+        secondary=tactic_faction_table, lazy='subquery')
 
     specialization_id = Column(Integer, ForeignKey('specialization.id'))
     specialization = relationship('Specialization')
@@ -302,8 +311,8 @@ class Roster(Base):
     name = Column(Text)
     player_name = Column(Text)
 
-    factions = relationship('Faction', secondary=roster_faction_table)
-    entries = relationship('RosterEntry', cascade='delete')
+    factions = relationship('Faction', secondary=roster_faction_table, lazy='subquery')
+    entries = relationship('RosterEntry', cascade='delete', lazy='subquery')
 
     def __str__(self):
         return self.name
@@ -343,10 +352,9 @@ class RosterEntry(Base):
 
     @property
     def points(self):
-        # wargear_points = sum([ w.points if w.points else 0 for w in self.wargear ]) if self.wargear else 0
-        # figure_points = self.profile.points if self.profile and self.profile.points else 0
-        # return int(wargear_points) + int(figure_points)
-        return 1
+        wargear_points = sum([ w.points if w.points else 0 for w in self.wargear ]) if self.wargear else 0
+        figure_points = self.profile.points if self.profile and self.profile.points else 0
+        return int(wargear_points) + int(figure_points)
 
 class Faction(Base):
     __tablename__ = 'faction'
