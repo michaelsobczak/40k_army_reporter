@@ -40,8 +40,8 @@ class RosterEntryView(ArmybuilderModelView):
     column_editable_list = ['name', 'figure', 'specialization', 'roster', 'wargear']
 
 class RosterView(ArmybuilderModelView):
-    column_list = ['name', 'player_name', 'factions', 'entries', 'points']
-    column_editable_list = ['name', 'player_name', 'factions', 'entries']
+    column_list = ['name', 'factions', 'entries', 'points']
+    column_editable_list = ['name', 'factions', 'entries']
 
 class TacticView(ArmybuilderModelView):
     column_searchable_list = ('name', 'text', 'cost')

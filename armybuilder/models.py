@@ -342,7 +342,7 @@ class RosterEntry(Base):
         'Wargear',
         secondary=roster_entry_wargear_table,
         back_populates='roster_entries',
-        lazy='subquery'
+        lazy='joined'
         
     )
 
