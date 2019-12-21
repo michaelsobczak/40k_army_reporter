@@ -265,7 +265,9 @@ function delete_data(item) {
 
 
 function initialize_roster_entry_grid(entry_grid_id, roster_id) {
-    $.get('/api/wargear', null, function(data, stuff, stuff) {
+    console.log('initializing shit...');
+    $.get('/v2/api/wargear', null, function(data, whatever, stuff) {
+        console.log("got wargear");
         var wargear = data['objects'];
         var wargear_id_map = {};
         for (var w = 0; w <wargear.length; w++) {
@@ -278,6 +280,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
             var pageIndex = $(gs).data('JSGrid').pageIndex;
             var pageSize = $(gs).data('JSGrid').pageSize;
             var d = $.Deferred();
+            console.log("calling load data...");
             $.ajax({
                 url: "/api/roster/" + roster_id + "/entries?page=" + pageIndex + "&results_per_page=" + pageSize,
                 dataType: "json"
@@ -321,7 +324,7 @@ function initialize_roster_entry_grid(entry_grid_id, roster_id) {
             });
             return d.promise();
         }
-
+        console.log($(gs));
         $(gs).jsGrid({
             width: "100%",
             sorting: false,

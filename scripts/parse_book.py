@@ -34,6 +34,29 @@ def log_failure(type: str, msg: str, matchstr: str, matchgroup: Dict[str, str], 
     with open(logfile, 'a') as f:
         f.write(f'"{type}", "{matchstr}", "{msg}"\n')
 
+
+# Print iterations progress
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = printEnd)
+    # Print New Line on Complete
+    if iteration == total: 
+        print()
+
 def get_or_create_keyword(keyword: str) -> Keyword:
     kw = keyword.title()
     k = db.session.query(Keyword).filter_by(label=kw).first()
@@ -174,7 +197,14 @@ def extract_tactics(corpus: str):
     r = re.compile(TACTIC_REGEX)
     tactic_string_match_groups = [(m.groupdict(), m.string[m.start(0):m.end(0)]) for m in r.finditer(corpus)]
     print(f'Found {len(tactic_string_match_groups)} tactics...')
-    tactics = [parse_tactic(mg, matchstr) for mg, matchstr in tactic_string_match_groups]
+
+    tactics = []
+    printProgressBar(0, len(tactic_string_match_groups))
+    for mg, matchstr in tactic_string_match_groups:
+        tactics.append(parse_tactic(mg, matchstr))
+        printProgressBar(len(tactics), len(tactic_string_match_groups))
+    
+        
 
 def parse_profiled_wargear(mg, s):
     lines = [ l.strip() for l in s.strip().split('\n') if len(l.strip()) > 0 ]
@@ -362,8 +392,11 @@ def extract_figures(corpus: str):
 
 
 def parse_book(corpus: str):
+    print(f'Prasing tactics...')
     extract_tactics(corpus)
+    print(f'Parsing wargear...')
     extract_wargear(corpus)
+    print(f'Parsing figures...')
     extract_figures(corpus)
 
 
