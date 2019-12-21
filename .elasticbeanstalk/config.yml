@@ -2,6 +2,12 @@ branch-defaults:
   master:
     environment: armybuilder-dev
     group_suffix: null
+  pdf_parsing:
+    environment: armybuilder-dev
+environment-defaults:
+  armybuilder-dev:
+    branch: null
+    repository: null
 global:
   application_name: armybuilder
   branch: null
