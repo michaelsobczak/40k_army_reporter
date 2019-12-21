@@ -52,6 +52,31 @@ wargearprofile_ability_table = make_secondary_table('wargearprofile', 'ability')
 figureprofile_ability_table = make_secondary_table('figureprofile', 'ability')
 rosterentry_killteam_table = make_secondary_table('rosterentry', 'killteam')
 
+class User(UserMixin, Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    username = Column(String(64), index=True, unique=True)
+    email = Column(String(120), index=True, unique=True)
+    password_hash = Column(String(128))
+
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+    def __str__(self):
+        return self.username
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    roles = relationship(
+        'Role',
+        secondary=user_role_table,
+        back_populates='users'
+    )
+
 class Role(Base):
     __tablename__ = 'role'
     id = Column(Integer, primary_key=True)
@@ -279,11 +304,6 @@ class Roster(Base):
     factions = relationship('Faction', secondary=roster_faction_table)
     entries = relationship('RosterEntry', cascade='delete')
 
-    users = relationship(
-        'User',
-        secondary=user_roster_table,
-        back_populates='rosters'
-    )
     def __str__(self):
         return self.name
 
@@ -300,7 +320,7 @@ class RosterEntry(Base):
     figure = relationship('Figure', )
 
     figureprofile_id = Column(Integer, ForeignKey('figureprofile.id'))
-    profile = relationship('FigureProfile', )
+    profile = relationship('FigureProfile', lazy='subquery')
 
     specialization_id = Column(Integer, ForeignKey('specialization.id'))
     specialization = relationship('Specialization', )
@@ -322,9 +342,10 @@ class RosterEntry(Base):
 
     @property
     def points(self):
-        wargear_points = sum([ w.points if w.points else 0 for w in self.wargear ]) if self.wargear else 0
-        figure_points = self.profile.points if self.profile and self.profile.points else 0
-        return int(wargear_points) + int(figure_points)
+        # wargear_points = sum([ w.points if w.points else 0 for w in self.wargear ]) if self.wargear else 0
+        # figure_points = self.profile.points if self.profile and self.profile.points else 0
+        # return int(wargear_points) + int(figure_points)
+        return 1
 
 class Faction(Base):
     __tablename__ = 'faction'
@@ -350,32 +371,3 @@ class Killteam(Base):
 
     team = relationship('RosterEntry', secondary=rosterentry_killteam_table)
 
-class User(UserMixin, Base):
-    __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    username = Column(String(64), index=True, unique=True)
-    email = Column(String(120), index=True, unique=True)
-    password_hash = Column(String(128))
-
-    rosters = relationship(
-        'Roster',
-        secondary=user_roster_table,
-        back_populates='users'
-    )
-    def __repr__(self):
-        return '<User {}>'.format(self.username)
-
-    def __str__(self):
-        return self.username
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    roles = relationship(
-        'Role',
-        secondary=user_role_table,
-        back_populates='users'
-    )

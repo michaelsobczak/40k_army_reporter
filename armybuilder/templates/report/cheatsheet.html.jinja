@@ -11,7 +11,7 @@
     {% endfor %}
 </div>
 
-<h2 class="tactic-label"> {{ "Common Tactics" }}</h2>
+<h2 class="tactic-label"> Common Tactics</h2>
 <div class="tactics-container common">
     {% for c_tac in common_tactics %}
         {{ macros.render_tactic(c_tac) }}
@@ -25,14 +25,14 @@
         {{ macros.render_tactic(s_tac) }}
     {% endfor %} #}
 </div>
-<h2 class="tactic-label breaker"> {{  faction_tactics[0].factions[0].name+" Tactics" }}</h2>
+<h2 class="tactic-label breaker"> Faction Tactics</h2>
 <div class="tactics-container faction">
     {% for f_tac in faction_tactics %}
         {{ macros.render_tactic(f_tac) }}
     {% endfor %}
 </div>
 
-<h2 class="tactic-label breaker"> {{ "Specialist Tactics" }}</h2>
+<h2 class="tactic-label breaker"> Specialist Tactics</h2>
 <div class="tactics-container specialist">
     {% for s_tac in specialist_tactics %}
         {{ macros.render_tactic(s_tac) }}

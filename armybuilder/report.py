@@ -44,9 +44,16 @@ def generate_report(output_dir: str, roster_id: int) -> Dict[str, str]:
     print(roster)
     for roster_entry in roster.entries:
         print("DEBUGGING SPECIALIST TACTICS")
-        print(roster_entry.specialization)
-        if roster_entry.specialization and len(roster_entry.specialization.tactics) > 0:
-            specialist_tactics.append(roster_entry.specialization.tactics)
+        # print(roster_entry.specialization.tactics)
+        if roster_entry.specialization:
+            tactics = db.session.query(Tactic).all()
+            print("Tactics")
+            print(tactics)
+            specialist_tactics = []
+            for tactic in tactics:
+                print(tactic)
+                if tactic.specialization_id == roster_entry.specialization.id:
+                    specialist_tactics.append(tactic)
         model_id_map[roster_entry.figure.id] = roster_entry.figure
     
 
